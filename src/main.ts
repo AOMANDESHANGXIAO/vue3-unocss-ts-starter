@@ -1,6 +1,9 @@
 import { createApp } from 'vue'
-import './style.css'
- import './styles/tailwind.css'
+import './styles/tailwind.css'
+import './styles/variates.css'
 import App from './App.vue'
+import stores from './stores'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+
+app.use(stores).mount('#app')
