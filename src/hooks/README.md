@@ -1,0 +1,1 @@
+This directory is used to contain the hooks for the project.
