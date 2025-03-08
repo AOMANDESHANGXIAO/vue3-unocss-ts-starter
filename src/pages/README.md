@@ -1,1 +1,0 @@
-This directory is used to contain the pages for the project.

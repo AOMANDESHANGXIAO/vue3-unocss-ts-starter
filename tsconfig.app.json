@@ -10,5 +10,14 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "include",
+    "src/**/*.d.ts",
+    "./*d.ts",
+    "./auto-imports.d.ts",
+    "./typed-router.d.ts"
+  ]
 }
