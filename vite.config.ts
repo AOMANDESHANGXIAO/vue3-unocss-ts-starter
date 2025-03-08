@@ -11,7 +11,6 @@ const pathResolve = (path: string) => {
   return resolve(root, path)
 }
 
-// TODO: 完成路由文件的自动导入
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
