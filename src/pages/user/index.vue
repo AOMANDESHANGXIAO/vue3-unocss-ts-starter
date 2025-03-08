@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 defineOptions({
-    name: 'index'
+  name: 'index',
 })
 </script>
 
 <template>
-	<div>/user</div>
+  <div>
+  </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

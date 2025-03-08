@@ -7,7 +7,6 @@ defineOptions({
 <template>
 	<div>This is home page
   </div>
-  <div><RouterView :key="$route.fullPath"></RouterView></div>
 </template>
 
 <style lang="scss" scoped>
