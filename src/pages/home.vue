@@ -3,7 +3,8 @@
   "name":"home",
   "meta": {
     "title": "首页",
-    "icon": "home"
+    "icon": "home",
+    "menuOrder": 1
   }
 }
 </route>

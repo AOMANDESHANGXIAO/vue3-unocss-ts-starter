@@ -3,7 +3,8 @@
   "name": "about",
   "meta": {
     "title": "关于",
-    "icon": "comment"
+    "icon": "comment",
+    "menuOrder": 3
   }
 }
 </route>

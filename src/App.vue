@@ -26,6 +26,15 @@ const state = reactive({
 
 const transformRouteToMenu = (route: RouteRecordRaw) => {
   const meta = route.meta
+  if (!meta) return
+  if (!meta.icon) {
+    return {
+      key: route.name,
+      label: meta!.title,
+      title: meta!.title,
+      path: route.path,
+    }
+  }
   return {
     key: route.name,
     icon: () => h(FontAwesomeIcon, { icon: meta!.icon as string }),
@@ -70,9 +79,9 @@ const menuStyle = computed(() => {
 // The type, e.g,MenuProps['onClick'], provided by ant-design-vue is not correct.
 // So that, I use any here.
 const handleMenuClick = (e: any) => {
-  if(!e) return
+  if (!e) return
   console.log('e', e.item.originItemValue.path)
-  if(e.item.originItemValue.path) {
+  if (e.item.originItemValue.path) {
     router.push(e.item.originItemValue.path)
   }
   // router.push(e.)

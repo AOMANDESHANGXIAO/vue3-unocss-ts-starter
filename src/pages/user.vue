@@ -2,7 +2,8 @@
 {
   "meta": {
     "title": "用户",
-    "icon": "user"
+    "icon": "user",
+    "menuOrder": 2
   }
 }
 </route>
