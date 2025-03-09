@@ -3,6 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
 import { resolve } from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 import VueRouter from 'unplugin-vue-router/vite'
 
 const root = process.cwd()
@@ -21,6 +23,12 @@ export default defineConfig({
     AutoImport({
       imports: ['vue', 'pinia'],
       dts: './auto-imports.d.ts',
+    }),
+    Components({
+      dts: './components.d.ts',
+      resolvers: [AntDesignVueResolver({
+        importStyle: false,
+      })],
     }),
     UnoCSS(),
   ],

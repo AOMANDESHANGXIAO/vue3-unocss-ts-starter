@@ -1,7 +1,7 @@
 /* This is used to set the color mode for the app. */
 html {
   --color-text: #1e2939;
-  --color-bg: white;
+  --color-bg: #f8fafc;
   color: var(--color-text);
   background-color: var(--color-bg);
 }
