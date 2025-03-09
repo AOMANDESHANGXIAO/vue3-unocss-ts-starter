@@ -18,6 +18,7 @@ export default defineConfig({
   plugins: [
     VueRouter({
       routesFolder: 'src/pages',
+      routeBlockLang: 'json5',
     }),
     vue(),
     AutoImport({
@@ -26,9 +27,11 @@ export default defineConfig({
     }),
     Components({
       dts: './components.d.ts',
-      resolvers: [AntDesignVueResolver({
-        importStyle: false,
-      })],
+      resolvers: [
+        AntDesignVueResolver({
+          importStyle: false,
+        }),
+      ],
     }),
     UnoCSS(),
   ],
