@@ -10,7 +10,12 @@ import router from './routers'
 import { useSystemConfigStore } from './stores/use-system-config-store'
 
 const systemConfigStore = useSystemConfigStore()
-const { toggleCollapsed, toggleColorMode } = systemConfigStore
+const {
+  toggleCollapsed,
+  toggleColorMode,
+  addSelectedKeyHistory,
+  removeSelectedKeyHistory,
+} = systemConfigStore
 const systemConfig = toRef(systemConfigStore.config)
 const colorModeModel = ref(systemConfig.value.colorMode === 'dark')
 watch(
@@ -67,9 +72,22 @@ const handleMenuClick = (e: any) => {
   if (!e) return
   console.log('e', e)
   if (e.item.originItemValue.path) {
+    addSelectedKeyHistory({
+      key: e.key,
+      path: e.item.originItemValue.path,
+      title: e.item.originItemValue.title,
+    })
+    systemConfig.value.activeKey = e.key
     router.push(e.item.originItemValue.path)
   }
   // router.push(e.)
+}
+const handleClickTab = ({ path, key }: { path: string; key: string }) => {
+  systemConfig.value.activeKey = key
+  router.push(path)
+}
+const handleClickRemoveTab = (key: string) => {
+  removeSelectedKeyHistory(key)
 }
 </script>
 
@@ -126,16 +144,38 @@ const handleMenuClick = (e: any) => {
         <header
           class="header flex-shrink-0 h-50px flex items-center justify-between bg-white b-l-[1px_solid_#foo] p-x-16px"
         >
-          <a-space>
-            <div class="p-x-16px p-y-8px border-b-primary cursor-pointer">
-              <span class="text-primary">教师信息</span>
-              <FontAwesomeIcon
-                icon="close"
-                class="ml-2px text-12px text-gray hover:text-gray-700 cursor-pointer"
-              ></FontAwesomeIcon>
-            </div>
-            <div class="p-x-16px p-y-8px">教学安排</div>
+          <a-space v-if="systemConfig.selectedKeysHistory.length">
+            <template
+              v-for="item in systemConfig.selectedKeysHistory"
+              :key="item.key"
+            >
+              <div
+                @click="
+                  handleClickTab({
+                    path: item.path,
+                    key: item.key,
+                  })
+                "
+                class="tab-item p-x-16px p-y-8px cursor-pointer"
+                :class="{
+                  'border-b-primary': item.key === systemConfig.activeKey,
+                }"
+              >
+                <span
+                  :class="{
+                    'text-primary': item.key === systemConfig.activeKey,
+                  }"
+                  >{{ item.title }}</span
+                >
+                <FontAwesomeIcon
+                  @click="handleClickRemoveTab(item.key)"
+                  icon="close"
+                  class="icon ml-2px text-12px text-gray hover:text-gray-700 cursor-pointer"
+                ></FontAwesomeIcon>
+              </div>
+            </template>
           </a-space>
+          <div v-else>早上好!</div>
           <a-space>
             <a-switch
               v-model:checked="colorModeModel"
@@ -143,9 +183,11 @@ const handleMenuClick = (e: any) => {
               unCheckedChildren="深色"
             ></a-switch>
             <a-badge dot>
-              <notification-outlined :style="{
-                color: systemConfig.colorMode === 'dark' ? 'white' : 'black'
-              }"/>
+              <notification-outlined
+                :style="{
+                  color: systemConfig.colorMode === 'dark' ? 'white' : 'black',
+                }"
+              />
             </a-badge>
             <a-avatar
               size="small"
@@ -163,7 +205,7 @@ const handleMenuClick = (e: any) => {
 </template>
 
 <style lang="scss">
-$deep-dark-color:#001529;
+$deep-dark-color: #001529;
 .light {
   --color-text: #1e2939;
   --color-bg: #f8fafc;
@@ -194,8 +236,17 @@ $deep-dark-color:#001529;
 .border-b-primary {
   border-bottom: 2px solid rgb(var(--color-primary));
 }
+.tab-item {
+  &:hover {
+    .icon {
+      opacity: 1;
+    }
+  }
+  .icon {
+    opacity: 0;
+  }
+}
 :deep(.ant-menu-inline) {
   border: none !important;
 }
-
 </style>
