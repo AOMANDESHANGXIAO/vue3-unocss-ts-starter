@@ -4,7 +4,8 @@
   "meta": {
     "title": "教师管理",
     "icon": "chalkboard-teacher",
-    "menuOrder": 3
+    "menuOrder": 3,
+    "showInMenu": true
   }
 }
 </route>
@@ -15,8 +16,10 @@ defineOptions({
 </script>
 
 <template>
-  <div>This is teacher page</div>
-  <RouterView :key="$route.fullPath"></RouterView>
+  <div>
+    <div>This is teacher page</div>
+    <RouterView :key="$route.fullPath"></RouterView>
+  </div>
 </template>
 
 <style lang="scss" scoped></style>

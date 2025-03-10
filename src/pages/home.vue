@@ -4,7 +4,8 @@
   "meta": {
     "title": "首页",
     "icon": "home",
-    "menuOrder": 1
+    "menuOrder": 1,
+    "showInMenu": true
   }
 }
 </route>

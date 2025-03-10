@@ -7,7 +7,7 @@ type SelectedKeyHistoryItem = {
   title: string
 }
 export const useSystemConfigStore = defineStore('systemConfigStore', () => {
-  const presupposedThemes = ['default']
+  const presupposedThemes = ['default','spring']
   const config = useLocalStorage('systemConfig', {
     colorMode: 'dark' as MenuTheme,
     theme: 'default',

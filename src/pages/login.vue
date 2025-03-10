@@ -1,22 +1,20 @@
 <route lang="json">
 {
   "meta": {
-    "title": "学生管理",
-    "icon": "user-graduate",
-    "menuOrder": 2,
-    "showInMenu": true
+    "title": "登录界面",
+    "showInMenu": false
   }
 }
 </route>
 
 <script lang="ts" setup>
 defineOptions({
-  name: 'user',
+  name: 'login',
 })
 </script>
 
 <template>
-  <div>This is user page</div>
+  <div>This is login page</div>
 </template>
 
 <style lang="scss" scoped></style>

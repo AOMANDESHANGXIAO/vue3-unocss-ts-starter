@@ -8,6 +8,7 @@ import { NotificationOutlined } from '@ant-design/icons-vue'
 import _ from 'lodash'
 import router from './routers'
 import { useSystemConfigStore } from './stores/use-system-config-store'
+import { useCssVar } from '@vueuse/core'
 
 const systemConfigStore = useSystemConfigStore()
 const {
@@ -27,6 +28,9 @@ watch(
 const transformRouteToMenu = (route: RouteRecordRaw) => {
   const meta = route.meta
   if (!meta) return
+  if (!meta.showInMenu) {
+    return void 0
+  }
   if (!meta.icon) {
     return {
       key: route.name,
@@ -60,6 +64,7 @@ const mapRouteToMenu = (routes: RouteRecordRaw[]): MenuProps['items'] => {
   }) as MenuProps['items']
 }
 const items = mapRouteToMenu(routes)
+console.log(items)
 const menuStyle = computed(() => {
   return {
     flex: 1,
@@ -89,10 +94,23 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
 const handleClickRemoveTab = (key: string) => {
   removeSelectedKeyHistory(key)
 }
+const rgbToHex = (rgb: string) => {
+  const rgbValues = rgb.split(',').map(value => parseInt(value.trim(), 10))
+  const [r, g, b] = rgbValues
+
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
+}
+const antTheme = computed(() => {
+  return {
+    token: {
+      colorPrimary: rgbToHex(useCssVar('--color-primary').value as string),
+    },
+  }
+})
 </script>
 
 <template>
-  <a-config-provider>
+  <a-config-provider :theme="antTheme">
     <div
       class="w-100vw h-100vh overflow-hidden flex"
       :class="[systemConfig.colorMode]"
@@ -197,7 +215,13 @@ const handleClickRemoveTab = (key: string) => {
           </a-space>
         </header>
         <main class="flex-1">
-          <RouterView :key="$route.fullPath"></RouterView>
+          <RouterView v-slot="{ Component }">
+            <Transition mode="out-in" :appear="false">
+              <KeepAlive>
+                <component :is="Component"/>
+              </KeepAlive>
+            </Transition>
+          </RouterView>
         </main>
       </div>
     </div>
@@ -248,5 +272,15 @@ $deep-dark-color: #001529;
 }
 :deep(.ant-menu-inline) {
   border: none !important;
+}
+/* 下面我们会解释这些 class 是做什么的 */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

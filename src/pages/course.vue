@@ -3,7 +3,8 @@
   "meta": {
     "title": "课程管理",
     "icon": "eye",
-    "menuOrder": 4
+    "menuOrder": 4,
+    "showInMenu": true
   }
 }
 </route>

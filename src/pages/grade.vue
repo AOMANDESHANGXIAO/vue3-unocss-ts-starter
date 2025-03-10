@@ -3,7 +3,8 @@
   "meta": {
     "title": "成绩管理",
     "icon": "edit",
-    "menuOrder": 5
+    "menuOrder": 5,
+    "showInMenu": true
   }
 }
 </route>
@@ -15,7 +16,7 @@ defineOptions({
 </script>
 
 <template>
-  <div></div>
+  <div>This is grade page</div>
 </template>
 
 <style lang="scss" scoped></style>

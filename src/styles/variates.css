@@ -1,23 +1,15 @@
-/* This is used to set the color mode for the app. */
-/* html {
-  --color-text: #1e2939;
-  --color-bg: #f8fafc;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-} */
-.light {
-  --color-text: #1e2939;
-  --color-bg: #f8fafc;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-}
-.dark {
-  --color-text: white;
-  --color-bg: #1e2939;
-}
 /* This is used to set the theme for the app. */
 html.theme-default {
   --color-primary: 22, 119, 255;
+  --color-success: 47, 169, 104;
+  --color-warning: 241, 169, 54;
+  --color-danger: 213, 68, 97;
+  --color-error: 213, 68, 97;
+  --color-info: 144, 147, 153;
+}
+
+html.theme-spring {
+  --color-primary: 47, 169, 104;
   --color-success: 47, 169, 104;
   --color-warning: 241, 169, 54;
   --color-danger: 213, 68, 97;

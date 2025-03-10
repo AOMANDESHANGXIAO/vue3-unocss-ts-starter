@@ -2,7 +2,8 @@
 {
   "meta": {
     "title": "教师信息",
-    "menuOrder": 1
+    "menuOrder": 1,
+    "showInMenu": true
   }
 }
 </route>

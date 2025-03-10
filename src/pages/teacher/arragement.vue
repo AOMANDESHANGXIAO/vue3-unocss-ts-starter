@@ -2,7 +2,8 @@
 {
   "meta": {
     "title": "教学安排",
-    "menuOrder": 1
+    "menuOrder": 1,
+    "showInMenu": true
   }
 }
 </route>
