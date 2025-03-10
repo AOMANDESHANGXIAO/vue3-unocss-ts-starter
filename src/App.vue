@@ -5,16 +5,21 @@ import type { RouteRecordRaw } from 'vue-router'
 import type { MenuProps } from 'ant-design-vue'
 import { routes } from './routers'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { NotificationOutlined } from '@ant-design/icons-vue'
 import _ from 'lodash'
 import router from './routers'
+import { useSystemConfigStore } from './stores/use-system-config-store'
 
-const state = reactive({
-  collapsed: false,
-  selectedKeys: ['home'],
-  openKeys: ['home'],
-  preOpenKeys: ['home'] as string[],
-})
-
+const systemConfigStore = useSystemConfigStore()
+const { toggleCollapsed,toggleColorMode } = systemConfigStore
+const systemConfig = toRef(systemConfigStore.config)
+const colorModeModel = ref(systemConfig.value.colorMode === 'dark')
+watch(
+  () => colorModeModel.value,
+  () => {
+    toggleColorMode()
+  }
+)
 const transformRouteToMenu = (route: RouteRecordRaw) => {
   const meta = route.meta
   if (!meta) return
@@ -23,6 +28,7 @@ const transformRouteToMenu = (route: RouteRecordRaw) => {
       key: route.name,
       label: meta!.title,
       title: meta!.title,
+      // In fact, the generated `route.name` represents the complete path, rather than `route.path`.
       path: route.name,
     }
   }
@@ -31,7 +37,7 @@ const transformRouteToMenu = (route: RouteRecordRaw) => {
     icon: () => h(FontAwesomeIcon, { icon: meta!.icon as string }),
     label: meta!.title,
     title: meta!.title,
-    path: route.name,// 事实上，生成的route.name才是完整的路径而非route.path
+    path: route.name,
   }
 }
 
@@ -50,21 +56,10 @@ const mapRouteToMenu = (routes: RouteRecordRaw[]): MenuProps['items'] => {
   }) as MenuProps['items']
 }
 const items = mapRouteToMenu(routes)
-console.log('items', items)
-watch(
-  () => state.openKeys,
-  (_val, oldVal) => {
-    state.preOpenKeys = oldVal
-  }
-)
-const toggleCollapsed = () => {
-  state.collapsed = !state.collapsed
-  state.openKeys = state.collapsed ? [] : state.preOpenKeys
-}
 const menuStyle = computed(() => {
   return {
     flex: 1,
-    'min-width': state.collapsed ? '30px' : '200px',
+    'min-width': systemConfig.value.collapsed ? '30px' : '200px',
   }
 })
 // The type, e.g,MenuProps['onClick'], provided by ant-design-vue is not correct.
@@ -90,31 +85,72 @@ const handleMenuClick = (e: any) => {
           size="small"
           shape="circle"
         >
-          <MenuFoldOutlined v-if="state.collapsed" />
+          <MenuFoldOutlined v-if="systemConfig.collapsed" />
           <MenuUnfoldOutlined v-else />
         </a-button>
       </div>
       <header
-        class="flex-shrink-0 h-50px text-center line-height-50px"
-      ></header>
+        class="flex-shrink-0 h-50px text-center line-height-50px border-b-gray-7"
+      >
+        <a-space align="center">
+          <FontAwesomeIcon
+            icon="graduation-cap"
+            class="text-16px text-primary"
+          />
+          <span class="text-16px" v-if="!systemConfig.collapsed"
+            >教务管理系统</span
+          >
+        </a-space>
+      </header>
       <section
         class="flex-1 overflow-y-auto overflow-x-hidden hidden-scrollbar"
       >
         <a-menu
           @click="handleMenuClick"
           id="menu"
-          v-model:openKeys="state.openKeys"
-          v-model:selectedKeys="state.selectedKeys"
+          v-model:openKeys="systemConfig.openKeys"
+          v-model:selectedKeys="systemConfig.selectedKeys"
           :style="menuStyle"
           mode="inline"
-          :inline-collapsed="state.collapsed"
+          :inline-collapsed="systemConfig.collapsed"
           :items="items"
         >
         </a-menu>
       </section>
     </div>
-    <div class="flex-1">
-      <RouterView :key="$route.fullPath"></RouterView>
+    <div class="flex-1 flex flex-col">
+      <header
+        class="flex-shrink-0 h-50px flex items-center justify-between bg-white b-l-[1px_solid_#foo] p-x-16px"
+      >
+        <a-space>
+          <div class="p-x-16px p-y-8px border-b-primary cursor-pointer">
+            <span class="text-primary">教师信息</span>
+            <FontAwesomeIcon
+              icon="close"
+              class="ml-2px text-12px text-gray hover:text-gray-700 cursor-pointer"
+            ></FontAwesomeIcon>
+          </div>
+          <div class="p-x-16px p-y-8px">教学安排</div>
+        </a-space>
+        <a-space>
+          <a-switch
+            v-model:checked="colorModeModel"
+            checkedChildren="浅色"
+            unCheckedChildren="深色"
+          ></a-switch>
+          <a-badge dot>
+            <notification-outlined style="font-size: 16px" />
+          </a-badge>
+          <a-avatar
+            size="small"
+            src="https://ai-public.mastergo.com/ai/img_res/a8bf73a294afd78156d5860b6d704d78.jpg"
+          ></a-avatar
+          ><span class="text-14px">张老师</span>
+        </a-space>
+      </header>
+      <main class="flex-1">
+        <RouterView :key="$route.fullPath"></RouterView>
+      </main>
     </div>
   </div>
 </template>
@@ -126,7 +162,12 @@ const handleMenuClick = (e: any) => {
   }
   -ms-overflow-style: none;
 }
-
+.text-primary {
+  color: rgb(var(--color-primary));
+}
+.border-b-primary {
+  border-bottom: 2px solid rgb(var(--color-primary));
+}
 :deep(.ant-menu-inline) {
   border: none !important;
 }
