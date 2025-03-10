@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { useLocalStorage, useColorMode } from '@vueuse/core'
+import type { MenuTheme } from 'ant-design-vue'
 type SelectedKeyHistoryItem = {
   key: string
   path: string
@@ -7,7 +8,7 @@ type SelectedKeyHistoryItem = {
 export const useSystemConfigStore = defineStore('systemConfigStore', () => {
   const presupposedThemes = ['default']
   const config = useLocalStorage('systemConfig', {
-    colorMode: useColorMode().value,
+    colorMode: 'dark' as MenuTheme,
     theme: 'default',
     openKeys: ['home'],
     activeKey: 'home',
@@ -20,14 +21,8 @@ export const useSystemConfigStore = defineStore('systemConfigStore', () => {
     config.value.collapsed = !config.value.collapsed
   }
   const toggleColorMode = () => {
-    console.log('toggleColorMode')
     config.value.colorMode =
       config.value.colorMode === 'light' ? 'dark' : 'light'
-    if (config.value.colorMode === 'dark') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
   }
   const setTheme = (newTheme: string) => {
     document.documentElement.classList.remove(`theme-${config.value.theme}`)

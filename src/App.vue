@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { reactive, watch, h } from 'vue'
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue'
 import type { RouteRecordRaw } from 'vue-router'
 import type { MenuProps } from 'ant-design-vue'
@@ -11,7 +10,7 @@ import router from './routers'
 import { useSystemConfigStore } from './stores/use-system-config-store'
 
 const systemConfigStore = useSystemConfigStore()
-const { toggleCollapsed,toggleColorMode } = systemConfigStore
+const { toggleCollapsed, toggleColorMode } = systemConfigStore
 const systemConfig = toRef(systemConfigStore.config)
 const colorModeModel = ref(systemConfig.value.colorMode === 'dark')
 watch(
@@ -66,8 +65,8 @@ const menuStyle = computed(() => {
 // So that, I use any here.
 const handleMenuClick = (e: any) => {
   if (!e) return
+  console.log('e', e)
   if (e.item.originItemValue.path) {
-    console.log('e.item.originItemValue.path', e.item.originItemValue.path)
     router.push(e.item.originItemValue.path)
   }
   // router.push(e.)
@@ -75,87 +74,114 @@ const handleMenuClick = (e: any) => {
 </script>
 
 <template>
-  <div class="w-100vw h-100vh overflow-hidden flex">
-    <div class="relative h-full bg-white flex flex-col">
-      <!-- This button was used to toggle the collapsed state -->
-      <div class="absolute right-0 top-50% z-10 transform translate-x-50%">
-        <a-button
-          @click="toggleCollapsed"
-          type="primary"
-          size="small"
-          shape="circle"
-        >
-          <MenuFoldOutlined v-if="systemConfig.collapsed" />
-          <MenuUnfoldOutlined v-else />
-        </a-button>
-      </div>
-      <header
-        class="flex-shrink-0 h-50px text-center line-height-50px border-b-gray-7"
-      >
-        <a-space align="center">
-          <FontAwesomeIcon
-            icon="graduation-cap"
-            class="text-16px text-primary"
-          />
-          <span class="text-16px" v-if="!systemConfig.collapsed"
-            >教务管理系统</span
-          >
-        </a-space>
-      </header>
-      <section
-        class="flex-1 overflow-y-auto overflow-x-hidden hidden-scrollbar"
-      >
-        <a-menu
-          @click="handleMenuClick"
-          id="menu"
-          v-model:openKeys="systemConfig.openKeys"
-          v-model:selectedKeys="systemConfig.selectedKeys"
-          :style="menuStyle"
-          mode="inline"
-          :inline-collapsed="systemConfig.collapsed"
-          :items="items"
-        >
-        </a-menu>
-      </section>
-    </div>
-    <div class="flex-1 flex flex-col">
-      <header
-        class="flex-shrink-0 h-50px flex items-center justify-between bg-white b-l-[1px_solid_#foo] p-x-16px"
-      >
-        <a-space>
-          <div class="p-x-16px p-y-8px border-b-primary cursor-pointer">
-            <span class="text-primary">教师信息</span>
-            <FontAwesomeIcon
-              icon="close"
-              class="ml-2px text-12px text-gray hover:text-gray-700 cursor-pointer"
-            ></FontAwesomeIcon>
-          </div>
-          <div class="p-x-16px p-y-8px">教学安排</div>
-        </a-space>
-        <a-space>
-          <a-switch
-            v-model:checked="colorModeModel"
-            checkedChildren="浅色"
-            unCheckedChildren="深色"
-          ></a-switch>
-          <a-badge dot>
-            <notification-outlined style="font-size: 16px" />
-          </a-badge>
-          <a-avatar
+  <a-config-provider>
+    <div
+      class="w-100vw h-100vh overflow-hidden flex"
+      :class="[systemConfig.colorMode]"
+    >
+      <div class="sidebar relative h-full bg-white flex flex-col">
+        <!-- This button was used to toggle the collapsed state -->
+        <div class="absolute right-0 top-50% z-10 transform translate-x-50%">
+          <a-button
+            @click="toggleCollapsed"
+            type="primary"
             size="small"
-            src="https://ai-public.mastergo.com/ai/img_res/a8bf73a294afd78156d5860b6d704d78.jpg"
-          ></a-avatar
-          ><span class="text-14px">张老师</span>
-        </a-space>
-      </header>
-      <main class="flex-1">
-        <RouterView :key="$route.fullPath"></RouterView>
-      </main>
+            shape="circle"
+          >
+            <MenuFoldOutlined v-if="systemConfig.collapsed" />
+            <MenuUnfoldOutlined v-else />
+          </a-button>
+        </div>
+        <header
+          class="flex-shrink-0 h-50px text-center line-height-50px border-b-gray-7"
+        >
+          <a-space align="center">
+            <FontAwesomeIcon
+              icon="graduation-cap"
+              class="text-16px text-primary"
+            />
+            <span class="text-16px" v-if="!systemConfig.collapsed"
+              >教务管理系统</span
+            >
+          </a-space>
+        </header>
+        <section
+          class="flex-1 overflow-y-auto overflow-x-hidden hidden-scrollbar"
+        >
+          <a-menu
+            @click="handleMenuClick"
+            id="menu"
+            v-model:openKeys="systemConfig.openKeys"
+            v-model:selectedKeys="systemConfig.selectedKeys"
+            :style="menuStyle"
+            mode="inline"
+            :theme="systemConfig.colorMode"
+            :inline-collapsed="systemConfig.collapsed"
+            :items="items"
+          >
+          </a-menu>
+        </section>
+      </div>
+      <div class="flex-1 flex flex-col">
+        <header
+          class="header flex-shrink-0 h-50px flex items-center justify-between bg-white b-l-[1px_solid_#foo] p-x-16px"
+        >
+          <a-space>
+            <div class="p-x-16px p-y-8px border-b-primary cursor-pointer">
+              <span class="text-primary">教师信息</span>
+              <FontAwesomeIcon
+                icon="close"
+                class="ml-2px text-12px text-gray hover:text-gray-700 cursor-pointer"
+              ></FontAwesomeIcon>
+            </div>
+            <div class="p-x-16px p-y-8px">教学安排</div>
+          </a-space>
+          <a-space>
+            <a-switch
+              v-model:checked="colorModeModel"
+              checkedChildren="浅色"
+              unCheckedChildren="深色"
+            ></a-switch>
+            <a-badge dot>
+              <notification-outlined :style="{
+                color: systemConfig.colorMode === 'dark' ? 'white' : 'black'
+              }"/>
+            </a-badge>
+            <a-avatar
+              size="small"
+              src="https://ai-public.mastergo.com/ai/img_res/a8bf73a294afd78156d5860b6d704d78.jpg"
+            ></a-avatar
+            ><span class="text-14px color-inherit">张老师</span>
+          </a-space>
+        </header>
+        <main class="flex-1">
+          <RouterView :key="$route.fullPath"></RouterView>
+        </main>
+      </div>
     </div>
-  </div>
+  </a-config-provider>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+$deep-dark-color:#001529;
+.light {
+  --color-text: #1e2939;
+  --color-bg: #f8fafc;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+.dark {
+  --color-text: white;
+  --color-bg: #1e2939;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  .sidebar {
+    background-color: $deep-dark-color;
+  }
+  .header {
+    background-color: $deep-dark-color;
+  }
+}
 .hidden-scrollbar {
   &::-webkit-scrollbar {
     display: none;
@@ -171,4 +197,5 @@ const handleMenuClick = (e: any) => {
 :deep(.ant-menu-inline) {
   border: none !important;
 }
+
 </style>
