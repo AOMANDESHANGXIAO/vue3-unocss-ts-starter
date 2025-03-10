@@ -1,17 +1,8 @@
-<route lang="json">
-{
-  "name": "home",
-  "meta": {
-    "title": "首页",
-    "icon": "home"
-  }
-}
-</route>
-
 <script lang="ts" setup>
 import { reactive, watch, h } from 'vue'
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue'
 import type { RouteRecordRaw } from 'vue-router'
+import type { MenuProps } from 'ant-design-vue'
 import { routes } from './routers'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import _ from 'lodash'
@@ -32,7 +23,7 @@ const transformRouteToMenu = (route: RouteRecordRaw) => {
       key: route.name,
       label: meta!.title,
       title: meta!.title,
-      path: route.path,
+      path: route.name,
     }
   }
   return {
@@ -40,25 +31,25 @@ const transformRouteToMenu = (route: RouteRecordRaw) => {
     icon: () => h(FontAwesomeIcon, { icon: meta!.icon as string }),
     label: meta!.title,
     title: meta!.title,
-    path: route.path,
+    path: route.name,// 事实上，生成的route.name才是完整的路径而非route.path
   }
 }
-const items = routes.map((route: RouteRecordRaw) => {
-  let result = {
-    ...transformRouteToMenu(route),
-    children:
-      route.children?.map(child => {
-        return {
-          ...transformRouteToMenu(child),
-          title: child.meta!.title,
-        }
-      }) || [],
-  }
-  if (result.children?.length === 0) {
-    return _.omit(result, 'children')
-  }
-  return result
-})
+
+const mapRouteToMenu = (routes: RouteRecordRaw[]): MenuProps['items'] => {
+  const routes_ = _.cloneDeep(routes)
+  return _.sortBy(routes_, route => {
+    return route.meta?.menuOrder || 0
+  }).map((route: RouteRecordRaw) => {
+    if (route.children) {
+      return {
+        ...transformRouteToMenu(route),
+        children: mapRouteToMenu(route.children),
+      }
+    }
+    return transformRouteToMenu(route) as MenuProps['items']
+  }) as MenuProps['items']
+}
+const items = mapRouteToMenu(routes)
 console.log('items', items)
 watch(
   () => state.openKeys,
@@ -73,15 +64,15 @@ const toggleCollapsed = () => {
 const menuStyle = computed(() => {
   return {
     flex: 1,
-    'min-width': state.collapsed ? '30px' : '120px',
+    'min-width': state.collapsed ? '30px' : '200px',
   }
 })
 // The type, e.g,MenuProps['onClick'], provided by ant-design-vue is not correct.
 // So that, I use any here.
 const handleMenuClick = (e: any) => {
   if (!e) return
-  console.log('e', e.item.originItemValue.path)
   if (e.item.originItemValue.path) {
+    console.log('e.item.originItemValue.path', e.item.originItemValue.path)
     router.push(e.item.originItemValue.path)
   }
   // router.push(e.)

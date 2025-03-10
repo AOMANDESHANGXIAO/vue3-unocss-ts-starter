@@ -1,21 +1,21 @@
 <route lang="json">
 {
-  "name": "about",
   "meta": {
-    "title": "关于",
-    "icon": "comment",
-    "menuOrder": 3
+    "title": "系统设置",
+    "icon": "cog",
+    "menuOrder": 6
   }
 }
 </route>
+
 <script lang="ts" setup>
 defineOptions({
-  name: 'about',
+  name: 'setting',
 })
 </script>
 
 <template>
-  <div>This is about page</div>
+  <div>This is setting page</div>
 </template>
 
 <style lang="scss" scoped></style>

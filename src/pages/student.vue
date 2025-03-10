@@ -1,8 +1,8 @@
 <route lang="json">
 {
   "meta": {
-    "title": "用户",
-    "icon": "user",
+    "title": "学生管理",
+    "icon": "user-graduate",
     "menuOrder": 2
   }
 }
