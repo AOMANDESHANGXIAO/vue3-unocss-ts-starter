@@ -8,7 +8,7 @@ const bgColorRules = colors.map(color => [
   },
 ])
 const textColorRules = colors.map(color => [
-  `text-${color}`,
+  `text-color-${color}`,
   ,
   {
     color: `rgb(var(--color-${color}))`,

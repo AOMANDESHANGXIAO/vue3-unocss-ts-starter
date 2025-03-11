@@ -5,7 +5,19 @@ html {
   --color-danger: 213, 68, 97;
   --color-error: 213, 68, 97;
   --color-info: 144, 147, 153;
-  --color-deep-dark:0, 21, 41;
+  --color-deep-dark: 0, 21, 41;
+}
+html.dark {
+  --color-text: white;
+  --color-bg: #1e2939;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+html.light {
+  --color-text: #1e2939;
+  --color-bg: #f8fafc;
+  color: var(--color-text);
+  background-color: var(--color-bg);
 }
 html.theme-default {
   --color-primary: 22, 119, 255;

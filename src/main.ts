@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
-import 'virtual:uno.css'
 import './styles/common.css'
 import './styles/variates.css'
+import 'virtual:uno.css'
 import 'animate.css'
 import App from './App.vue'
 import router from './routers'

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { useLocalStorage,useDark,useToggle } from '@vueuse/core'
+import { useLocalStorage, useDark, useToggle } from '@vueuse/core'
 import type { MenuTheme } from 'ant-design-vue'
 type SelectedKeyHistoryItem = {
   key: string
@@ -7,10 +7,10 @@ type SelectedKeyHistoryItem = {
   title: string
 }
 export const useSystemConfigStore = defineStore('systemConfigStore', () => {
-  const presupposedThemes = ['default','spring']
+  const presupposedThemes = ['default', 'spring']
   const isDark = useDark({
     selector: 'html',
-    attribute: 'theme',
+    attribute: 'class',
     valueDark: 'dark',
     valueLight: 'light',
   })
@@ -25,7 +25,7 @@ export const useSystemConfigStore = defineStore('systemConfigStore', () => {
     collapsed: false,
     selectedKeysHistory: [] as SelectedKeyHistoryItem[],
   })
-  if(config.value.colorMode === 'dark') {
+  if (config.value.colorMode === 'dark' && isDark.value === false) {
     toggleDark()
   }
   const toggleCollapsed = () => {
