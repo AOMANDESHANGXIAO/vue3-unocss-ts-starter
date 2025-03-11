@@ -1,6 +1,6 @@
 import { defineConfig } from 'unocss'
 
-const colors = ['primary', 'success', 'warning', 'danger', 'error', 'info']
+const colors = ['primary', 'success', 'warning', 'danger', 'error', 'info','deep-dark']
 const bgColorRules = colors.map(color => [
   `bg-${color}`,
   {

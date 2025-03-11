@@ -1,18 +1,16 @@
 /* This is used to set the theme for the app. */
-html.theme-default {
-  --color-primary: 22, 119, 255;
+html {
   --color-success: 47, 169, 104;
   --color-warning: 241, 169, 54;
   --color-danger: 213, 68, 97;
   --color-error: 213, 68, 97;
   --color-info: 144, 147, 153;
+  --color-deep-dark:0, 21, 41;
+}
+html.theme-default {
+  --color-primary: 22, 119, 255;
 }
 
 html.theme-spring {
   --color-primary: 47, 169, 104;
-  --color-success: 47, 169, 104;
-  --color-warning: 241, 169, 54;
-  --color-danger: 213, 68, 97;
-  --color-error: 213, 68, 97;
-  --color-info: 144, 147, 153;
 }

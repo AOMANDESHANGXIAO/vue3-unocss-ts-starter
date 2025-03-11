@@ -1,105 +1,19 @@
 <script lang="ts" setup>
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue'
-import type { RouteRecordRaw } from 'vue-router'
-import type { MenuProps } from 'ant-design-vue'
-import { routes } from './routers'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { NotificationOutlined } from '@ant-design/icons-vue'
-import _ from 'lodash'
-import router from './routers'
-import { useSystemConfigStore } from './stores/use-system-config-store'
+import MenuPage from '@/components/business/MenuPage.vue'
+import { RouterView, useRoute } from 'vue-router'
 import { useCssVar } from '@vueuse/core'
+import { rgbToHex } from '@/utils/color'
+import { useSystemConfigStore } from '@/stores/use-system-config-store'
 
-const systemConfigStore = useSystemConfigStore()
-const {
-  toggleCollapsed,
-  toggleColorMode,
-  addSelectedKeyHistory,
-  removeSelectedKeyHistory,
-} = systemConfigStore
-const systemConfig = toRef(systemConfigStore.config)
-const colorModeModel = ref(systemConfig.value.colorMode === 'dark')
-watch(
-  () => colorModeModel.value,
-  () => {
-    toggleColorMode()
-  }
-)
-const transformRouteToMenu = (route: RouteRecordRaw) => {
-  const meta = route.meta
-  if (!meta) return
-  if (!meta.showInMenu) {
-    return void 0
-  }
-  if (!meta.icon) {
-    return {
-      key: route.name,
-      label: meta!.title,
-      title: meta!.title,
-      // In fact, the generated `route.name` represents the complete path, rather than `route.path`.
-      path: route.name,
-    }
-  }
-  return {
-    key: route.name,
-    icon: () => h(FontAwesomeIcon, { icon: meta!.icon as string }),
-    label: meta!.title,
-    title: meta!.title,
-    path: route.name,
-  }
-}
-
-const mapRouteToMenu = (routes: RouteRecordRaw[]): MenuProps['items'] => {
-  const routes_ = _.cloneDeep(routes)
-  return _.sortBy(routes_, route => {
-    return route.meta?.menuOrder || 0
-  }).map((route: RouteRecordRaw) => {
-    if (route.children) {
-      return {
-        ...transformRouteToMenu(route),
-        children: mapRouteToMenu(route.children),
-      }
-    }
-    return transformRouteToMenu(route) as MenuProps['items']
-  }) as MenuProps['items']
-}
-const items = mapRouteToMenu(routes)
-console.log(items)
-const menuStyle = computed(() => {
-  return {
-    flex: 1,
-    'min-width': systemConfig.value.collapsed ? '30px' : '200px',
-  }
+defineOptions({
+  name: 'app',
 })
-// The type, e.g,MenuProps['onClick'], provided by ant-design-vue is not correct.
-// So that, I use any here.
-const handleMenuClick = (e: any) => {
-  if (!e) return
-  console.log('e', e)
-  if (e.item.originItemValue.path) {
-    addSelectedKeyHistory({
-      key: e.key,
-      path: e.item.originItemValue.path,
-      title: e.item.originItemValue.title,
-    })
-    systemConfig.value.activeKey = e.key
-    router.push(e.item.originItemValue.path)
-  }
-  // router.push(e.)
-}
-const handleClickTab = ({ path, key }: { path: string; key: string }) => {
-  systemConfig.value.activeKey = key
-  router.push(path)
-}
-const handleClickRemoveTab = (key: string) => {
-  removeSelectedKeyHistory(key)
-}
-const rgbToHex = (rgb: string) => {
-  const rgbValues = rgb.split(',').map(value => parseInt(value.trim(), 10))
-  const [r, g, b] = rgbValues
-
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
-}
+const systemConfigStore = useSystemConfigStore()
+const systemConfig = toRef(systemConfigStore.config)
+const currentRoute = useRoute()
+const isRouteInMenu = computed(() => {
+  return currentRoute.meta.showInMenu
+})
 const antTheme = computed(() => {
   return {
     token: {
@@ -111,125 +25,16 @@ const antTheme = computed(() => {
 
 <template>
   <a-config-provider :theme="antTheme">
-    <div
-      class="w-100vw h-100vh overflow-hidden flex"
-      :class="[systemConfig.colorMode]"
-    >
-      <div class="sidebar relative h-full bg-white flex flex-col">
-        <!-- This button was used to toggle the collapsed state -->
-        <div class="absolute right-0 top-50% z-10 transform translate-x-50%">
-          <a-button
-            @click="toggleCollapsed"
-            type="primary"
-            size="small"
-            shape="circle"
-          >
-            <MenuFoldOutlined v-if="systemConfig.collapsed" />
-            <MenuUnfoldOutlined v-else />
-          </a-button>
-        </div>
-        <header
-          class="flex-shrink-0 h-50px text-center line-height-50px border-b-gray-7"
-        >
-          <a-space align="center">
-            <FontAwesomeIcon
-              icon="graduation-cap"
-              class="text-16px text-primary"
-            />
-            <span class="text-16px" v-if="!systemConfig.collapsed"
-              >教务管理系统</span
-            >
-          </a-space>
-        </header>
-        <section
-          class="flex-1 overflow-y-auto overflow-x-hidden hidden-scrollbar"
-        >
-          <a-menu
-            @click="handleMenuClick"
-            id="menu"
-            v-model:openKeys="systemConfig.openKeys"
-            v-model:selectedKeys="systemConfig.selectedKeys"
-            :style="menuStyle"
-            mode="inline"
-            :theme="systemConfig.colorMode"
-            :inline-collapsed="systemConfig.collapsed"
-            :items="items"
-          >
-          </a-menu>
-        </section>
-      </div>
-      <div class="flex-1 flex flex-col">
-        <header
-          class="header flex-shrink-0 h-50px flex items-center justify-between bg-white b-l-[1px_solid_#foo] p-x-16px"
-        >
-          <a-space v-if="systemConfig.selectedKeysHistory.length">
-            <template
-              v-for="item in systemConfig.selectedKeysHistory"
-              :key="item.key"
-            >
-              <div
-                @click="
-                  handleClickTab({
-                    path: item.path,
-                    key: item.key,
-                  })
-                "
-                class="tab-item p-x-16px p-y-8px cursor-pointer"
-                :class="{
-                  'border-b-primary': item.key === systemConfig.activeKey,
-                }"
-              >
-                <span
-                  :class="{
-                    'text-primary': item.key === systemConfig.activeKey,
-                  }"
-                  >{{ item.title }}</span
-                >
-                <FontAwesomeIcon
-                  @click="handleClickRemoveTab(item.key)"
-                  icon="close"
-                  class="icon ml-2px text-12px text-gray hover:text-gray-700 cursor-pointer"
-                ></FontAwesomeIcon>
-              </div>
-            </template>
-          </a-space>
-          <div v-else>早上好!</div>
-          <a-space>
-            <a-switch
-              v-model:checked="colorModeModel"
-              checkedChildren="浅色"
-              unCheckedChildren="深色"
-            ></a-switch>
-            <a-badge dot>
-              <notification-outlined
-                :style="{
-                  color: systemConfig.colorMode === 'dark' ? 'white' : 'black',
-                }"
-              />
-            </a-badge>
-            <a-avatar
-              size="small"
-              src="https://ai-public.mastergo.com/ai/img_res/a8bf73a294afd78156d5860b6d704d78.jpg"
-            ></a-avatar
-            ><span class="text-14px color-inherit">张老师</span>
-          </a-space>
-        </header>
-        <main class="flex-1">
-          <RouterView v-slot="{ Component }">
-            <Transition mode="out-in" :appear="false">
-              <KeepAlive>
-                <component :is="Component"/>
-              </KeepAlive>
-            </Transition>
-          </RouterView>
-        </main>
-      </div>
+    <div id="root" :class="[systemConfig.colorMode]">
+      <component :is="isRouteInMenu ? MenuPage : RouterView"></component>
     </div>
   </a-config-provider>
 </template>
 
 <style lang="scss">
-$deep-dark-color: #001529;
+#root {
+  --color-deep-dark-color: #001529;
+}
 .light {
   --color-text: #1e2939;
   --color-bg: #f8fafc;
@@ -241,46 +46,5 @@ $deep-dark-color: #001529;
   --color-bg: #1e2939;
   color: var(--color-text);
   background-color: var(--color-bg);
-  .sidebar {
-    background-color: $deep-dark-color;
-  }
-  .header {
-    background-color: $deep-dark-color;
-  }
-}
-.hidden-scrollbar {
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-}
-.text-primary {
-  color: rgb(var(--color-primary));
-}
-.border-b-primary {
-  border-bottom: 2px solid rgb(var(--color-primary));
-}
-.tab-item {
-  &:hover {
-    .icon {
-      opacity: 1;
-    }
-  }
-  .icon {
-    opacity: 0;
-  }
-}
-:deep(.ant-menu-inline) {
-  border: none !important;
-}
-/* 下面我们会解释这些 class 是做什么的 */
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
 }
 </style>
