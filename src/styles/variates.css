@@ -18,6 +18,9 @@ html.light {
   --color-text: #1e2939;
   --color-bg: #f8fafc;
 }
+.dark::view-transition-old(root) {
+  z-index: 100;
+}
 html.theme-default {
   --color-primary: 22, 119, 255;
 }

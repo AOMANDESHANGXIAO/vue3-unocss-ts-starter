@@ -7,6 +7,7 @@ import { NotificationOutlined } from '@ant-design/icons-vue'
 import _ from 'lodash'
 import router, { routes } from '@/routers'
 import { useSystemConfigStore } from '@/stores/use-system-config-store'
+import ColorModeSwitcher from '@/components/ui/color-mode-switcher.vue'
 
 const systemConfigStore = useSystemConfigStore()
 const {
@@ -17,12 +18,14 @@ const {
 } = systemConfigStore
 const systemConfig = toRef(systemConfigStore.config)
 const colorModeModel = ref(systemConfig.value.colorMode === 'dark')
-watch(
-  () => colorModeModel.value,
-  () => {
-    toggleColorMode()
-  }
-)
+// TODO: 解决这个方法会被调用两次，导致过渡失效的问题。
+const handleClickColorModeSwitcher = _.debounce((e: MouseEvent) => {
+  toggleColorMode(e)
+}, 300)
+// const handleClickSwitcher = (e: MouseEvent) => {
+//   const { clientX, clientY } = e
+//   console.log('clientX', clientX, 'clientY', clientY)
+// }
 const transformRouteToMenu = (route: RouteRecordRaw) => {
   const meta = route.meta
   if (!meta) return
@@ -165,11 +168,15 @@ const handleClickRemoveTab = (key: string) => {
             icon="cog"
             class="cursor-pointer hover:rotate-45 transition-transform-300"
           ></FontAwesomeIcon>
-          <a-switch
+          <!-- <a-switch
             v-model:checked="colorModeModel"
             checkedChildren="浅色"
             unCheckedChildren="深色"
-          ></a-switch>
+          ></a-switch> -->
+          <ColorModeSwitcher
+            @click="handleClickColorModeSwitcher"
+            :checked="colorModeModel"
+          ></ColorModeSwitcher>
           <a-badge dot>
             <notification-outlined
               :style="{
@@ -244,7 +251,7 @@ li {
 #tabs {
   border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
 }
-.dark #tabs{
+.dark #tabs {
   border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.2);
 }
 #main-container {
@@ -257,5 +264,16 @@ li {
 }
 :deep(.ant-menu-line) {
   border: none !important;
+}
+::view-transition-new(root),
+::view-transition-old(root) {
+  /* 关闭默认动画，否则影响自定义动画的执行 */
+  animation: none;
+}
+.dark::view-transition-old(root) {
+  z-index: 100;
+}
+.light::view-transition-new(root) {
+  z-index: 100;
 }
 </style>
