@@ -32,16 +32,15 @@ export const useSystemConfigStore = defineStore('systemConfigStore', () => {
   const toggleCollapsed = () => {
     config.value.collapsed = !config.value.collapsed
   }
-  const toggleColorMode = (e: MouseEvent) => {
-    console.log('切换颜色模式')
-    config.value.colorMode =
-      config.value.colorMode === 'light' ? 'dark' : 'light'
-    toggleDark()
+  const toggleColorMode = async (e: MouseEvent) => {
+
+    // 以下代码是为了实现一个主题切换的动画
     const transition = document.startViewTransition(() => {
-      console.log('开始过渡')
-      // toggleDark()
+      config.value.colorMode =
+      config.value.colorMode === 'light' ? 'dark' : 'light'
+      toggleDark()
     })
-    transition.ready.then(()=>{
+    transition.ready.then(() => {
       // 由于我们要从鼠标点击的位置开始做动画，所以我们需要先获取到鼠标的位置
       const { clientX, clientY } = e
       // 计算半径，以鼠标点击的位置为圆心，到四个角的距离中最大的那个作为半径
@@ -51,21 +50,21 @@ export const useSystemConfigStore = defineStore('systemConfigStore', () => {
       )
       const clipPath = [
         `circle(0% at ${clientX}px ${clientY}px)`,
-        `circle(${radius}px at ${clientX}px ${clientY}px)`
+        `circle(${radius}px at ${clientX}px ${clientY}px)`,
       ]
       const isDark = config.value.colorMode === 'dark'
       // 自定义动画
       document.documentElement.animate(
         {
           // 如果要切换到暗色主题，我们在过渡的时候从半径 100% 的圆开始，到 0% 的圆结束
-          clipPath: isDark ? clipPath.reverse() : clipPath
+          clipPath: isDark ? clipPath.reverse() : clipPath,
         },
         {
           duration: 500,
           // 如果要切换到暗色主题，我们应该裁剪 view-transition-old(root) 的内容
           pseudoElement: isDark
             ? '::view-transition-old(root)'
-            : '::view-transition-new(root)'
+            : '::view-transition-new(root)',
         }
       )
     })

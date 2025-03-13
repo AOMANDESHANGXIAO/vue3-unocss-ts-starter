@@ -19,9 +19,10 @@ const {
 const systemConfig = toRef(systemConfigStore.config)
 const colorModeModel = ref(systemConfig.value.colorMode === 'dark')
 // TODO: 解决这个方法会被调用两次，导致过渡失效的问题。
-const handleClickColorModeSwitcher = _.debounce((e: MouseEvent) => {
+const handleClickColorModeSwitcher = (e: MouseEvent) => {
+  console.log('click color mode switcher', e)
   toggleColorMode(e)
-}, 300)
+}
 // const handleClickSwitcher = (e: MouseEvent) => {
 //   const { clientX, clientY } = e
 //   console.log('clientX', clientX, 'clientY', clientY)
@@ -164,19 +165,19 @@ const handleClickRemoveTab = (key: string) => {
               </div>
             </a-space>
           </div>
+          <!-- setting icon-->
           <FontAwesomeIcon
             icon="cog"
             class="cursor-pointer hover:rotate-45 transition-transform-300"
           ></FontAwesomeIcon>
-          <!-- <a-switch
-            v-model:checked="colorModeModel"
-            checkedChildren="浅色"
-            unCheckedChildren="深色"
-          ></a-switch> -->
-          <ColorModeSwitcher
-            @click="handleClickColorModeSwitcher"
-            :checked="colorModeModel"
-          ></ColorModeSwitcher>
+          <!-- color mode icon -->
+          <Transition name="fade">
+            <FontAwesomeIcon
+              @click="toggleColorMode"
+              :icon="systemConfig.colorMode === 'dark' ? 'moon' : 'sun'"
+              class="cursor-pointer hover:rotate-45 transition-transform-300"
+            ></FontAwesomeIcon>
+          </Transition>
           <a-badge dot>
             <notification-outlined
               :style="{
