@@ -5,6 +5,7 @@ type SelectedKeyHistoryItem = {
   key: string
   path: string
   title: string
+  icon: string
 }
 export const useSystemConfigStore = defineStore('systemConfigStore', () => {
   const presupposedThemes = ['default', 'spring']

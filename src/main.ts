@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import './styles/common.css'
 import './styles/variates.css'
+import './styles/transiation.css'
 import 'virtual:uno.css'
 import 'animate.css'
 import App from './App.vue'
