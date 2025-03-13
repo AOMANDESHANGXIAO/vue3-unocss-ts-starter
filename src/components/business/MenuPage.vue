@@ -81,7 +81,11 @@ const handleMenuClick = (e: any) => {
       title: e.item.originItemValue.title,
     })
     systemConfig.value.activeKey = e.key
-    router.push(e.item.originItemValue.path)
+    console.log('e.item.originItemValue.path', e.item.originItemValue.path)
+    router.push({
+      path: e.item.originItemValue.path,
+      replace: true,
+    })
   }
   // router.push(e.)
 }
@@ -96,10 +100,16 @@ const handleClickRemoveTab = (key: string) => {
 
 <template>
   <div class="w-100vw h-100vh overflow-hidden flex">
-    <div class="relative h-full bg-white flex flex-col dark:bg-deep-dark">
-      <header
-        class="flex-shrink-0 h-50px text-center line-height-50px border-b-gray-7"
-      >
+    <!-- Menu -->
+    <div
+      id="menu"
+      class="relative h-full bg-white flex flex-col dark:bg-deep-dark gray-border transition-width-300"
+      :class="{
+        'w-200px': !systemConfig.collapsed,
+        'w-80px': systemConfig.collapsed,
+      }"
+    >
+      <header class="flex-shrink-0 h-50px text-center line-height-50px">
         <a-space align="center">
           <FontAwesomeIcon
             icon="graduation-cap"
@@ -127,12 +137,13 @@ const handleClickRemoveTab = (key: string) => {
         </a-menu>
       </section>
     </div>
-    <div class="flex-1 flex flex-col">
+    <!-- Content -->
+    <div class="flex-1 flex flex-col gray-border">
       <header
-        class="flex-shrink-0 h-50px flex items-center justify-between bg-white dark:bg-deep-dark border-b-l-[1px_solid_#foo] p-x-16px p-l-0"
+        class="border-gray flex-shrink-0 h-50px flex items-center justify-between bg-white dark:bg-deep-dark p-x-16px p-l-0"
       >
         <component
-        @click="toggleCollapsed"
+          @click="toggleCollapsed"
           class="text-16px"
           :is="systemConfig.collapsed ? MenuFoldOutlined : MenuUnfoldOutlined"
         ></component>
@@ -173,37 +184,27 @@ const handleClickRemoveTab = (key: string) => {
         </a-space>
       </header>
       <main class="flex-1">
-        <a-space size="large">
-          <template
-            v-for="item in systemConfig.selectedKeysHistory"
-            :key="item.key"
+          <TransitionGroup
+            name="list"
+            tag="ul"
+            class="flex items-center bg-white dark:bg-deep-dark p-x-8px gap-25px"
           >
-            <div
-              @click="
-                handleClickTab({
-                  path: item.path,
-                  key: item.key,
-                })
-              "
-              class="tab-item p-x-16px p-y-8px cursor-pointer"
+            <li
+              v-for="item in systemConfigStore.config.selectedKeysHistory"
+              :key="item.key"
+              @click="handleClickTab(item)"
+              class="cursor-pointer p-y-8px p-x-8px text-16px transition-all-300"
               :class="{
-                'border-b-primary': item.key === systemConfig.activeKey,
+                'tab-item': true,
+                'text-primary border-b-primary active':
+                  systemConfig.activeKey === item.key,
+                'opacity-70 hover:opacity-100':
+                  systemConfig.activeKey !== item.key,
               }"
             >
-              <span
-                :class="{
-                  'text-primary': item.key === systemConfig.activeKey,
-                }"
-                >{{ item.title }}</span
-              >
-              <FontAwesomeIcon
-                @click="handleClickRemoveTab(item.key)"
-                icon="close"
-                class="icon ml-2px text-12px text-gray hover:text-gray-700 cursor-pointer"
-              ></FontAwesomeIcon>
-            </div>
-          </template>
-        </a-space>
+              {{ item.title }}
+            </li>
+          </TransitionGroup>
         <RouterView v-slot="{ Component }">
           <Transition mode="out-in" :appear="false">
             <KeepAlive>
@@ -226,9 +227,23 @@ const handleClickRemoveTab = (key: string) => {
 .text-primary {
   color: rgb(var(--color-primary));
 }
+.border-b-gary {
+  border-bottom: 2px solid rgb(var(--color-gray));
+}
 .border-b-primary {
   border-bottom: 2px solid rgb(var(--color-primary));
 }
+// .tab-item {
+//   border: 1px solid rgb(var(--color-gray));
+//   border-bottom: none;
+//   &.active {
+//     border: none;
+//     border-bottom: 2px solid rgb(var(--color-primary));
+//   }
+// }
+// .gray-border {
+//   border: 1px solid rgb(var(--color-gray));
+// }
 .tab-item {
   &:hover {
     .icon {
@@ -238,6 +253,9 @@ const handleClickRemoveTab = (key: string) => {
   .icon {
     opacity: 0;
   }
+}
+li {
+  list-style: none;
 }
 :deep(.ant-menu-inline) {
   border: none !important;
@@ -250,5 +268,14 @@ const handleClickRemoveTab = (key: string) => {
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>

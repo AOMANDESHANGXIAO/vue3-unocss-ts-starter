@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import MenuPage from '@/components/business/MenuPage.vue'
 import { RouterView, useRoute } from 'vue-router'
+import { theme } from 'ant-design-vue'
 import { useCssVar } from '@vueuse/core'
 import { rgbToHex } from '@/utils/color'
 
@@ -16,6 +17,7 @@ const antTheme = computed(() => {
     token: {
       colorPrimary: rgbToHex(useCssVar('--color-primary').value as string),
     },
+    algorithm: theme.defaultAlgorithm,
   }
 })
 </script>
@@ -28,5 +30,4 @@ const antTheme = computed(() => {
   </a-config-provider>
 </template>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

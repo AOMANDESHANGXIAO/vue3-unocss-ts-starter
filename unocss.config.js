@@ -1,6 +1,14 @@
 import { defineConfig } from 'unocss'
 
-const colors = ['primary', 'success', 'warning', 'danger', 'error', 'info','deep-dark']
+const colors = [
+  'primary',
+  'success',
+  'warning',
+  'danger',
+  'error',
+  'info',
+  'deep-dark',
+]
 const bgColorRules = colors.map(color => [
   `bg-${color}`,
   {
@@ -14,6 +22,18 @@ const textColorRules = colors.map(color => [
     color: `rgb(var(--color-${color}))`,
   },
 ])
+/**
+ * 自定义规则添加前缀cu
+ */
 export default defineConfig({
-  rules: [...bgColorRules, ...textColorRules],
+  rules: [
+    ...bgColorRules,
+    ...textColorRules,
+    [
+      [
+        /^cu-border-(.+)$/,
+        ([, c]) => ({ border: `1px solid rgb(var(--color-${c}))` }),
+      ],
+    ],
+  ],
 })

@@ -1,6 +1,5 @@
 <route lang="json">
 {
-  "name":"home",
   "meta": {
     "title": "首页",
     "icon": "home",
