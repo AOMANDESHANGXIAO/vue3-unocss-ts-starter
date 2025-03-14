@@ -6,23 +6,20 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { NotificationOutlined } from '@ant-design/icons-vue'
 import _ from 'lodash'
 import router, { routes } from '@/routers'
-import { useSystemConfigStore } from '@/stores/use-system-config-store'
-import ColorModeSwitcher from '@/components/ui/color-mode-switcher.vue'
+import { useSystemConfigStore } from '@/stores/modules/use-system-config-store'
+import { UserApi } from '@/apis/modules/user'
+
+UserApi.getUserInfo().then(res => {
+  console.log('get User Info res', res)
+})
 
 const systemConfigStore = useSystemConfigStore()
 const {
   toggleCollapsed,
   toggleColorMode,
   addSelectedKeyHistory,
-  removeSelectedKeyHistory,
 } = systemConfigStore
 const systemConfig = toRef(systemConfigStore.config)
-const colorModeModel = ref(systemConfig.value.colorMode === 'dark')
-// TODO: 解决这个方法会被调用两次，导致过渡失效的问题。
-const handleClickColorModeSwitcher = (e: MouseEvent) => {
-  console.log('click color mode switcher', e)
-  toggleColorMode(e)
-}
 // const handleClickSwitcher = (e: MouseEvent) => {
 //   const { clientX, clientY } = e
 //   console.log('clientX', clientX, 'clientY', clientY)
@@ -99,9 +96,9 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
   systemConfig.value.activeKey = key
   router.push(path)
 }
-const handleClickRemoveTab = (key: string) => {
-  removeSelectedKeyHistory(key)
-}
+// const handleClickRemoveTab = (key: string) => {
+//   removeSelectedKeyHistory(key)
+// }
 </script>
 
 <template>

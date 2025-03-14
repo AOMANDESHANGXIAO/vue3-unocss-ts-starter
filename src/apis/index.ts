@@ -4,8 +4,8 @@ import axios, {
   type AxiosError
 } from 'axios'
 import { message as antMessage } from 'ant-design-vue'
-import { useUserStore } from '@/stores/use-user-store'
-const { getToken } = useUserStore()
+import { useUserStore } from '@/stores/modules/use-user-store'
+
 // Create axios instance
 const BASE_URL = import.meta.env.VITE_APP_API_URL
 
@@ -17,6 +17,7 @@ const service: AxiosInstance = axios.create({
 // Request interceptor
 service.interceptors.request.use(
   (config) => {
+    const { getToken } = useUserStore()
     const token = getToken()
     // Add token to request headers if exists
     if (token) {

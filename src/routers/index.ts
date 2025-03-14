@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 //@ts-ignore
 import { routes } from 'vue-router/auto-routes'
-import { useUserStore } from '@/stores/use-user-store'
+import { useUserStore } from '@/stores/modules/use-user-store'
 
 console.log('routes\n', routes)
 

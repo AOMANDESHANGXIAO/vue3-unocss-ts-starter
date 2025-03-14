@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { useLocalStorage, useDark, useToggle } from '@vueuse/core'
 import type { MenuTheme } from 'ant-design-vue'
-type SelectedKeyHistoryItem = {
+export type SelectedKeyHistoryItem = {
   key: string
   path: string
   title: string
