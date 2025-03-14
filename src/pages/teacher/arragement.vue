@@ -8,8 +8,15 @@
 }
 </route>
 
+<script lang="ts" setup>
+import ContentContainer from '@/components/layouts/ContentContainer.vue';
+</script>
+
+
 <template>
-  <div>This is teacher-arragement page</div>
+  <ContentContainer>
+    <div>This is teacher-arragement page</div>
+  </ContentContainer>
 </template>
 
 <style lang="scss" scoped></style>

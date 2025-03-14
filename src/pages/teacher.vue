@@ -16,10 +16,7 @@ defineOptions({
 </script>
 
 <template>
-  <div>
-    <div>This is teacher page</div>
-    <RouterView :key="$route.fullPath"></RouterView>
-  </div>
+  <RouterView :key="$route.fullPath"></RouterView>
 </template>
 
 <style lang="scss" scoped></style>

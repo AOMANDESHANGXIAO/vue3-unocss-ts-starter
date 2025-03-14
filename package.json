@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "dev": "vite --mode development",
+    "test": "vite --mode test",
+    "build": "vue-tsc -b && vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -17,6 +18,7 @@
     "@vueuse/core": "^12.8.2",
     "animate.css": "^4.1.1",
     "ant-design-vue": "4.x",
+    "axios": "^1.8.3",
     "lodash": "^4.17.21",
     "pinia": "^3.0.1",
     "resize-observer-polyfill": "^1.5.1",
@@ -30,6 +32,7 @@
     "@unocss/preset-icons": "66.1.0-beta.3",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
+    "mockjs": "^1.1.0",
     "postcss": "^8.5.3",
     "sass-embedded": "^1.85.1",
     "typescript": "~5.7.2",

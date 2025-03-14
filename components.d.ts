@@ -26,6 +26,7 @@ declare module 'vue' {
     ATabPane: typeof import('ant-design-vue/es')['TabPane']
     ATabs: typeof import('ant-design-vue/es')['Tabs']
     ColorModeSwitcher: typeof import('./src/components/ui/color-mode-switcher.vue')['default']
+    ContentContainer: typeof import('./src/components/layouts/ContentContainer.vue')['default']
     MenuPage: typeof import('./src/components/business/MenuPage.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

@@ -7,7 +7,7 @@ type SelectedKeyHistoryItem = {
   title: string
   icon: string
 }
-export const useSystemConfigStore = defineStore('systemConfigStore', () => {
+export const useSystemConfigStore = defineStore('system-config-store', () => {
   const presupposedThemes = ['default', 'spring']
   const isDark = useDark({
     selector: 'html',
