@@ -2,6 +2,7 @@
 import MenuPage from '@/components/business/MenuPage.vue'
 import { RouterView, useRoute } from 'vue-router'
 import { theme } from 'ant-design-vue'
+import { useSystemConfigStore } from '@/stores/modules/use-system-config-store'
 import { useCssVar } from '@vueuse/core'
 import { rgbToHex } from '@/utils/color'
 
@@ -12,12 +13,16 @@ const currentRoute = useRoute()
 const isRouteInMenu = computed(() => {
   return currentRoute.meta.showInMenu
 })
+const systemConfig = useSystemConfigStore()
 const antTheme = computed(() => {
   return {
     token: {
       colorPrimary: rgbToHex(useCssVar('--color-primary').value as string),
     },
-    algorithm: theme.defaultAlgorithm,
+    algorithm:
+      systemConfig.config.colorMode === 'dark'
+        ? theme.darkAlgorithm
+        : theme.defaultAlgorithm,
   }
 })
 </script>
