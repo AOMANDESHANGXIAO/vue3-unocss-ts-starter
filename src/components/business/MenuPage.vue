@@ -121,7 +121,6 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
           v-model:selectedKeys="systemConfig.selectedKeys"
           :style="menuStyle"
           mode="inline"
-          :theme="systemConfig.colorMode"
           :inline-collapsed="systemConfig.collapsed"
           :items="items"
         >

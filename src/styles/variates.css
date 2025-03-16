@@ -5,14 +5,14 @@ html {
   --color-danger: 213, 68, 97;
   --color-error: 213, 68, 97;
   --color-info: 144, 147, 153;
-  --color-deep-dark: 0, 21, 41;
-  --color-gray:28 31 35;
+  --color-deep-dark: 20, 20, 20;
+  --color-gray: 28 31 35;
   color: var(--color-text);
   background-color: var(--color-bg);
 }
 html.dark {
   --color-text: white;
-  --color-bg: #1e2939;
+  --color-bg: #1d1d1d;
 }
 html.light {
   --color-text: #1e2939;

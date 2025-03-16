@@ -18,6 +18,7 @@ const antTheme = computed(() => {
   return {
     token: {
       colorPrimary: rgbToHex(useCssVar('--color-primary').value as string),
+      fontFamily: 'ali',
     },
     algorithm:
       systemConfig.config.colorMode === 'dark'
