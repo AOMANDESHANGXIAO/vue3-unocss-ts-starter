@@ -17,10 +17,6 @@ const systemConfigStore = useSystemConfigStore()
 const { toggleCollapsed, toggleColorMode, addSelectedKeyHistory } =
   systemConfigStore
 const systemConfig = toRef(systemConfigStore.config)
-// const handleClickSwitcher = (e: MouseEvent) => {
-//   const { clientX, clientY } = e
-//   console.log('clientX', clientX, 'clientY', clientY)
-// }
 const transformRouteToMenu = (route: RouteRecordRaw) => {
   const meta = route.meta
   if (!meta) return
@@ -136,7 +132,7 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
       <!-- header -->
       <header
         id="xb-content__header"
-        class="flex-shrink-0 flex items-center justify-between bg-white dark:bg-deep-dark p-x-16px p-l-0"
+        class="flex-shrink-0 flex items-center justify-between bg-white dark:bg-deep-dark p-x-16px"
       >
         <component
           @click="toggleCollapsed"
@@ -211,8 +207,8 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
           ><span> {{ item.title }}</span>
         </li>
       </TransitionGroup>
+      <!-- content -->
       <main id="xb-content__wrapper">
-        <!-- content -->
         <RouterView v-slot="{ Component }">
           <Transition mode="out-in" :appear="false">
             <KeepAlive>
@@ -241,19 +237,18 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
 li {
   list-style: none;
 }
-#tabs {
-  border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
-}
-.dark #tabs {
-  border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.2);
-}
-#main-container {
-  border-top: 1px solid rgba($color: #000000, $alpha: 0.2);
+#xb-content {
   border-left: 1px solid rgba($color: #000000, $alpha: 0.2);
 }
-.dark #main-container {
+.dark #xb-content {
   border-top: 1px solid rgba($color: #ffffff, $alpha: 0.2);
   border-left: 1px solid rgba($color: #ffffff, $alpha: 0.2);
+}
+.dark #xb-content{
+  #xb-content__tabs {
+    border-top: 1px solid rgba($color: #ffffff, $alpha: 0.2);
+    border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.2);
+  }
 }
 #xb-content {
   width: 100%;
@@ -263,6 +258,8 @@ li {
     height: var(--w-header);
   }
   #xb-content__tabs {
+    border-top: 1px solid rgba($color: #000000, $alpha: 0.2);
+    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
     .xb-content__tabs__item {
       height: var(--w-tab);
     }
