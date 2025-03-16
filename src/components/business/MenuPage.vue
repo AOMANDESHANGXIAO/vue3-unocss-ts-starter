@@ -7,18 +7,15 @@ import { NotificationOutlined } from '@ant-design/icons-vue'
 import _ from 'lodash'
 import router, { routes } from '@/routers'
 import { useSystemConfigStore } from '@/stores/modules/use-system-config-store'
-import { UserApi } from '@/apis/modules/user'
+// import { UserApi } from '@/apis/modules/user'
 
-UserApi.getUserInfo().then(res => {
-  console.log('get User Info res', res)
-})
+// UserApi.getUserInfo().then(res => {
+//   console.log('get User Info res', res)
+// })
 
 const systemConfigStore = useSystemConfigStore()
-const {
-  toggleCollapsed,
-  toggleColorMode,
-  addSelectedKeyHistory,
-} = systemConfigStore
+const { toggleCollapsed, toggleColorMode, addSelectedKeyHistory } =
+  systemConfigStore
 const systemConfig = toRef(systemConfigStore.config)
 // const handleClickSwitcher = (e: MouseEvent) => {
 //   const { clientX, clientY } = e
@@ -75,7 +72,6 @@ const menuStyle = computed(() => {
 // So that, I use any here.
 const handleMenuClick = (e: any) => {
   if (!e) return
-  console.log('e', e)
   if (e.item.originItemValue.path) {
     addSelectedKeyHistory({
       key: e.key,
@@ -84,35 +80,31 @@ const handleMenuClick = (e: any) => {
       icon: e.item.originItemValue.iconName,
     })
     systemConfig.value.activeKey = e.key
-    console.log('e.item.originItemValue.path', e.item.originItemValue.path)
     router.push({
       path: e.item.originItemValue.path,
       replace: true,
     })
   }
-  // router.push(e.)
 }
 const handleClickTab = ({ path, key }: { path: string; key: string }) => {
   systemConfig.value.activeKey = key
   router.push(path)
 }
-// const handleClickRemoveTab = (key: string) => {
-//   removeSelectedKeyHistory(key)
-// }
 </script>
 
 <template>
   <div class="w-100vw h-100vh overflow-hidden flex">
-    <!-- Menu -->
     <div
-      id="menu"
+      id="xb-menu"
       class="relative h-full bg-white flex flex-col dark:bg-deep-dark gray-border transition-width-300"
       :class="{
         'w-200px': !systemConfig.collapsed,
         'w-80px': systemConfig.collapsed,
       }"
     >
-      <header class="flex-shrink-0 h-50px text-center line-height-50px">
+      <header
+        class="flex-shrink-0 h-50px text-center line-height-50px box-border"
+      >
         <a-space align="center">
           <FontAwesomeIcon
             icon="graduation-cap"
@@ -140,10 +132,11 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
         </a-menu>
       </section>
     </div>
-    <!-- Content -->
-    <div class="flex-1 flex flex-col gray-border">
+    <div id="xb-content" class="gray-border">
+      <!-- header -->
       <header
-        class="flex-shrink-0 h-50px flex items-center justify-between bg-white dark:bg-deep-dark p-x-16px p-l-0"
+        id="xb-content__header"
+        class="flex-shrink-0 flex items-center justify-between bg-white dark:bg-deep-dark p-x-16px p-l-0"
       >
         <component
           @click="toggleCollapsed"
@@ -190,34 +183,36 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
           </a-space>
         </a-space>
       </header>
-      <main id="main-container" class="flex-1">
-        <TransitionGroup
-          name="list"
-          tag="ul"
-          id="tabs"
-          class="flex items-center bg-white dark:bg-deep-dark p-x-8px gap-25px"
+      <!-- tabs -->
+      <TransitionGroup
+        name="list"
+        tag="ul"
+        id="xb-content__tabs"
+        class="flex items-center bg-white dark:bg-deep-dark p-x-8px gap-25px"
+      >
+        <li
+          v-for="item in systemConfigStore.config.selectedKeysHistory"
+          :key="item.key"
+          @click="handleClickTab(item)"
+          class="box-border cursor-pointer line-height-30px text-14px transition-all-300"
+          :class="{
+            'xb-content__tabs__item': true,
+            'tab-item': true,
+            'text-primary border-b-primary active':
+              systemConfig.activeKey === item.key,
+            'opacity-70 hover:opacity-100': systemConfig.activeKey !== item.key,
+          }"
         >
-          <li
-            v-for="item in systemConfigStore.config.selectedKeysHistory"
-            :key="item.key"
-            @click="handleClickTab(item)"
-            class="cursor-pointer p-y-8px p-x-8px text-14px transition-all-300"
-            :class="{
-              'tab-item': true,
-              'text-primary border-b-primary active':
-                systemConfig.activeKey === item.key,
-              'opacity-70 hover:opacity-100':
-                systemConfig.activeKey !== item.key,
-            }"
-          >
-            <FontAwesomeIcon
-              v-if="item.icon"
-              :icon="item.icon"
-              class="mr-8px"
-            ></FontAwesomeIcon
-            ><span> {{ item.title }}</span>
-          </li>
-        </TransitionGroup>
+          <FontAwesomeIcon
+            v-if="item.icon"
+            :icon="item.icon"
+            class="mr-8px"
+          ></FontAwesomeIcon
+          ><span> {{ item.title }}</span>
+        </li>
+      </TransitionGroup>
+      <main id="xb-content__wrapper">
+        <!-- content -->
         <RouterView v-slot="{ Component }">
           <Transition mode="out-in" :appear="false">
             <KeepAlive>
@@ -260,6 +255,23 @@ li {
   border-top: 1px solid rgba($color: #ffffff, $alpha: 0.2);
   border-left: 1px solid rgba($color: #ffffff, $alpha: 0.2);
 }
+#xb-content {
+  width: 100%;
+  --w-header: 50px;
+  --w-tab: 30px;
+  #xb-content__header {
+    height: var(--w-header);
+  }
+  #xb-content__tabs {
+    .xb-content__tabs__item {
+      height: var(--w-tab);
+    }
+  }
+  #xb-content__wrapper {
+    height: calc(100vh - var(--w-header) - var(--w-tab));
+  }
+}
+
 :deep(.ant-menu-line) {
   border: none !important;
 }
