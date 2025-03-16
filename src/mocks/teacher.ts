@@ -1,7 +1,9 @@
+import type { MockMethod } from 'vite-plugin-mock'
 export default [
   {
     url: '/teacher/list',
     method: 'get',
+    timeout: 1000,
     response: (res: any) => {
       console.log(res)
       return {
@@ -51,50 +53,10 @@ export default [
               status: 1,
               createdTime: '2023-05-01',
             },
-            {
-              id: 6,
-              name: '周八',
-              age: 24,
-              department: '信息安全',
-              status: 1,
-              createdTime: '2023-06-01',
-            },
-            {
-              id: 7,
-              name: '吴九',
-              age: 27,
-              department: '物联网工程',
-              status: 1,
-              createdTime: '2023-07-01',
-            },
-            {
-              id: 8,
-              name: '郑十',
-              age: 20,
-              department: '人工智能',
-              status: 1,
-              createdTime: '2023-08-01',
-            },
-            {
-              id: 9,
-              name: '钱十一',
-              age: 23,
-              department: '通信工程',
-              status: 1,
-              createdTime: '2023-09-01',
-            },
-            {
-              id: 10,
-              name: '王十二',
-              age: 26,
-              department: '自动化',
-              status: 1,
-              createdTime: '2023-10-01',
-            },
           ],
           total: 128,
         },
       }
     },
   },
-]
+] as MockMethod[]

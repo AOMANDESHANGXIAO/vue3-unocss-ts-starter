@@ -12,6 +12,7 @@
 import ContentContainer from '@/components/layouts/ContentContainer.vue'
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { useAsyncState } from '@vueuse/core'
+import type { TablePaginationConfig } from 'ant-design-vue'
 import { TeacherApi } from '@/apis/modules/teacher'
 
 defineOptions({
@@ -53,10 +54,31 @@ const columns = [
   },
 ]
 
-const { state, isLoading } = useAsyncState(TeacherApi.getTeacherInfo, {
+const { state, isLoading, execute } = useAsyncState(TeacherApi.getTeacherInfo, {
   list: [],
   total: 0,
+},{
+  onSuccess:(res)=>{
+    pagination.value.total = res.total
+  }
 })
+const pagination = ref({
+  current: 1,
+  pageSize: 5,
+  total: state.value.total,
+  showSizeChanger: true,
+  pageSizeOptions: ['10', '20', '50'],
+  showTotal: (total: number) => `共 ${total} 条`,
+})
+const handleTableChange = (page: TablePaginationConfig) => {
+  pagination.value.current = page.current || 1
+  pagination.value.pageSize = page.pageSize || 5
+  // 第一个参数是延迟，第二个参数是传入的参数
+  execute(0, {
+    page: pagination.value.current,
+    pageSize: pagination.value.pageSize,
+  })
+}
 </script>
 
 <template>
@@ -105,14 +127,16 @@ const { state, isLoading } = useAsyncState(TeacherApi.getTeacherInfo, {
     <a-table
       :columns="columns"
       :data-source="state.list"
-      :pagination="false"
       :loading="isLoading"
+      :pagination="pagination"
+      size="small"
+      @change="handleTableChange"
     >
-      <template v-slot:bodyCell="{ column}">
-       <a-space v-if="column.key==='action'">
-        <a-button type="primary">编辑</a-button>
-        <a-button danger >删除</a-button>
-       </a-space>
+      <template v-slot:bodyCell="{ column }">
+        <a-space v-if="column.key === 'action'">
+          <a-button type="primary">编辑</a-button>
+          <a-button danger>删除</a-button>
+        </a-space>
       </template>
     </a-table>
   </ContentContainer>
