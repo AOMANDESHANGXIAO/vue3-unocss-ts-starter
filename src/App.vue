@@ -3,7 +3,6 @@ import MenuPage from '@/components/business/MenuPage.vue'
 import { RouterView, useRoute } from 'vue-router'
 import { theme } from 'ant-design-vue'
 import { useSystemConfigStore } from '@/stores/modules/use-system-config-store'
-import { useCssVar } from '@vueuse/core'
 import { rgbToHex } from '@/utils/color'
 
 defineOptions({
@@ -17,7 +16,7 @@ const systemConfig = useSystemConfigStore()
 const antTheme = computed(() => {
   return {
     token: {
-      colorPrimary: rgbToHex(useCssVar('--color-primary').value as string),
+      colorPrimary: rgbToHex(systemConfig.config.cssVars['--color-primary']),
       fontFamily: 'ali',
     },
     algorithm:
@@ -30,7 +29,7 @@ const antTheme = computed(() => {
 
 <template>
   <a-config-provider :theme="antTheme">
-    <div id="root">
+    <div id="root" :style="systemConfig.config.cssVars">
       <component :is="isRouteInMenu ? MenuPage : RouterView"></component>
     </div>
   </a-config-provider>

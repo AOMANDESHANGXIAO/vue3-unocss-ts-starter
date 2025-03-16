@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { useLocalStorage, useDark, useToggle } from '@vueuse/core'
+import _ from 'lodash'
 import type { MenuTheme } from 'ant-design-vue'
 export type SelectedKeyHistoryItem = {
   key: string
@@ -7,8 +8,12 @@ export type SelectedKeyHistoryItem = {
   title: string
   icon: string
 }
+export type Theme = {
+  name: string
+  key: string
+  cssVars: Record<string, string>
+}
 export const useSystemConfigStore = defineStore('system-config-store', () => {
-  const presupposedThemes = ['default', 'spring']
   const isDark = useDark({
     selector: 'html',
     attribute: 'class',
@@ -16,6 +21,35 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     valueLight: 'light',
   })
   const toggleDark = useToggle(isDark)
+  const themes: Theme[] = [
+    {
+      name: '深蓝',
+      key: 'shenlan',
+      cssVars: {
+        '--color-primary': '22, 119, 255',
+      },
+    },
+    {
+      name: '春意',
+      key:'shilan',
+      cssVars: {
+        '--color-primary': '47, 169, 104',
+      },
+    },
+  ]
+  const defaultCssVars = {
+    '--color-primary': '22, 119, 255',
+    '--color-success': '47, 169, 104',
+    '--color-warning': '241, 169, 54',
+    '--color-danger': '213, 68, 97',
+    '--color-error': '213, 68, 97',
+    '--color-info': '144, 147, 153',
+    '--color-deep-dark': '20, 20, 20',
+    '--color-gray': '28, 31, 35',
+  }
+  const getThemeCssVarsByKey = (key: string) => {
+    return themes.find(i => i.key === key)?.cssVars || defaultCssVars 
+  }
   const config = useLocalStorage('systemConfig', {
     colorMode: 'dark' as MenuTheme,
     theme: 'default',
@@ -25,6 +59,8 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     preOpenKeys: ['home'] as string[],
     collapsed: false,
     selectedKeysHistory: [] as SelectedKeyHistoryItem[],
+    themeKey:'shenlan',
+    cssVars: _.merge({}, defaultCssVars, getThemeCssVarsByKey('shenlan')),
   })
   if (config.value.colorMode === 'dark' && isDark.value === false) {
     toggleDark()
@@ -33,11 +69,10 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     config.value.collapsed = !config.value.collapsed
   }
   const toggleColorMode = async (e: MouseEvent) => {
-
     // 以下代码是为了实现一个主题切换的动画
     const transition = document.startViewTransition(() => {
       config.value.colorMode =
-      config.value.colorMode === 'light' ? 'dark' : 'light'
+        config.value.colorMode === 'light' ? 'dark' : 'light'
       toggleDark()
     })
     transition.ready.then(() => {
@@ -121,7 +156,6 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     toggleCollapsed,
     toggleColorMode,
     setTheme,
-    presupposedThemes,
     addSelectedKeyHistory,
     removeSelectedKeyHistory,
   }
