@@ -34,5 +34,3 @@ const antTheme = computed(() => {
     </div>
   </a-config-provider>
 </template>
-
-<style lang="scss"></style>

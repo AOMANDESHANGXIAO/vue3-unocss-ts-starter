@@ -22,18 +22,9 @@ const textColorRules = colors.map(color => [
     color: `rgb(var(--color-${color}))`,
   },
 ])
-/**
- * 自定义规则添加前缀cu
- */
 export default defineConfig({
   rules: [
     ...bgColorRules,
     ...textColorRules,
-    [
-      [
-        /^cu-border-(.+)$/,
-        ([, c]) => ({ border: `1px solid rgb(var(--color-${c}))` }),
-      ],
-    ],
   ],
 })
