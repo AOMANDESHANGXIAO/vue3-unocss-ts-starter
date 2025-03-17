@@ -90,6 +90,7 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
 
 <template>
   <div class="w-100vw h-100vh overflow-hidden flex">
+
     <div
       id="xb-menu"
       class="relative h-full bg-white flex flex-col dark:bg-deep-dark gray-border transition-width-300"
@@ -127,17 +128,20 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
         </a-menu>
       </section>
     </div>
+
     <div id="xb-content" class="gray-border">
       <!-- header -->
       <header
         id="xb-content__header"
         class="flex-shrink-0 flex items-center justify-between bg-white dark:bg-deep-dark p-x-16px"
       >
+
         <component
           @click="toggleCollapsed"
           class="text-16px"
           :is="systemConfig.collapsed ? MenuFoldOutlined : MenuUnfoldOutlined"
         ></component>
+
         <a-space size="large">
           <div
             class="rounded-2xl dark:bg-gray-700 p-x-16px p-y-4px bg-#f4f4f5 cursor-pointer hover:scale-105 transition-all-300"
@@ -150,11 +154,13 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
               </div>
             </a-space>
           </div>
+
           <!-- setting icon-->
           <FontAwesomeIcon
             icon="cog"
             class="cursor-pointer hover:rotate-45 transition-transform-300"
           ></FontAwesomeIcon>
+
           <!-- color mode icon -->
           <Transition name="fade">
             <FontAwesomeIcon
@@ -163,6 +169,7 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
               class="cursor-pointer hover:rotate-45 transition-transform-300"
             ></FontAwesomeIcon>
           </Transition>
+
           <a-badge dot>
             <notification-outlined
               :style="{
@@ -170,6 +177,7 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
               }"
             />
           </a-badge>
+
           <a-space align="center" size="small">
             <a-avatar
               src="https://ai-public.mastergo.com/ai/img_res/a8bf73a294afd78156d5860b6d704d78.jpg"
@@ -178,6 +186,7 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
           </a-space>
         </a-space>
       </header>
+
       <!-- tabs -->
       <TransitionGroup
         name="list"
@@ -207,6 +216,7 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
         </li>
       </TransitionGroup>
       <!-- content -->
+       
       <main id="xb-content__wrapper">
         <RouterView v-slot="{ Component }">
           <Transition mode="out-in" :appear="false">

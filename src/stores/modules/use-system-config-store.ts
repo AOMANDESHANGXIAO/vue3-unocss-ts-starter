@@ -31,9 +31,30 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     },
     {
       name: '春意',
-      key:'shilan',
+      key: 'shilan',
       cssVars: {
         '--color-primary': '47, 169, 104',
+      },
+    },
+    {
+      name: '亮橙',
+      key: 'liangcheng',
+      cssVars: {
+        '--color-primary': '236, 82, 40',
+      },
+    },
+    {
+      name: '韵味',
+      key: 'yunwei',
+      cssVars: {
+        '--color-primary': '70, 53, 177',
+      },
+    },
+    {
+      name: '精致',
+      key: 'jingzhi',
+      cssVars: {
+        '--color-primary': '76, 88, 91',
       },
     },
   ]
@@ -48,7 +69,13 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     '--color-gray': '28, 31, 35',
   }
   const getThemeCssVarsByKey = (key: string) => {
-    return themes.find(i => i.key === key)?.cssVars || defaultCssVars 
+    return themes.find(i => i.key === key)?.cssVars || defaultCssVars
+  }
+  const setTheme = (newTheme: Theme) => {
+    if (newTheme.key === config.value.themeKey) return
+    if(themes.find(i => i.key === newTheme.key) === undefined) return
+    config.value.themeKey = newTheme.key
+    config.value.cssVars = _.merge({}, defaultCssVars, newTheme.cssVars)
   }
   const config = useLocalStorage('systemConfig', {
     colorMode: 'dark' as MenuTheme,
@@ -59,7 +86,7 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     preOpenKeys: ['home'] as string[],
     collapsed: false,
     selectedKeysHistory: [] as SelectedKeyHistoryItem[],
-    themeKey:'shenlan',
+    themeKey: 'shenlan',
     cssVars: _.merge({}, defaultCssVars, getThemeCssVarsByKey('shenlan')),
   })
   if (config.value.colorMode === 'dark' && isDark.value === false) {
@@ -104,11 +131,7 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
       )
     })
   }
-  const setTheme = (newTheme: string) => {
-    document.documentElement.classList.remove(`theme-${config.value.theme}`)
-    config.value.theme = newTheme
-    document.documentElement.classList.add(`theme-${config.value.theme}`)
-  }
+
   const addSelectedKeyHistory = (item: SelectedKeyHistoryItem) => {
     if (config.value.selectedKeysHistory.find(i => i.key === item.key)) {
       return
@@ -156,6 +179,7 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     toggleCollapsed,
     toggleColorMode,
     setTheme,
+    themes,
     addSelectedKeyHistory,
     removeSelectedKeyHistory,
   }
