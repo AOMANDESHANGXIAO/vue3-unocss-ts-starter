@@ -13,6 +13,12 @@ export type Theme = {
   key: string
   cssVars: Record<string, string>
 }
+export type AuthLayoutOption = {
+  key: 'left' | 'right' | 'center'
+  label: string
+  icon: string
+}
+
 export const useSystemConfigStore = defineStore('system-config-store', () => {
   const isDark = useDark({
     selector: 'html',
@@ -73,7 +79,7 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
   }
   const setTheme = (newTheme: Theme) => {
     if (newTheme.key === config.value.themeKey) return
-    if(themes.find(i => i.key === newTheme.key) === undefined) return
+    if (themes.find(i => i.key === newTheme.key) === undefined) return
     config.value.themeKey = newTheme.key
     config.value.cssVars = _.merge({}, defaultCssVars, newTheme.cssVars)
   }
@@ -88,6 +94,7 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     selectedKeysHistory: [] as SelectedKeyHistoryItem[],
     themeKey: 'shenlan',
     cssVars: _.merge({}, defaultCssVars, getThemeCssVarsByKey('shenlan')),
+    authLayout: 'right' as AuthLayoutOption['key'],
   })
   if (config.value.colorMode === 'dark' && isDark.value === false) {
     toggleDark()
@@ -174,6 +181,29 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
       i => i.key !== key
     )
   }
+
+  const authLayoutOptions: AuthLayoutOption[] = [
+    {
+      label: '靠右',
+      key: 'right',
+      icon: 'arrow-right',
+    },
+    {
+      label: '靠左',
+      key: 'left',
+      icon: 'arrow-left',
+    },
+    {
+      label: '居中',
+      key: 'center',
+      icon: 'align-center',
+    },
+  ]
+  const setAuthLayout = (item: AuthLayoutOption) => {
+    if (item.key === config.value.authLayout) return
+    config.value.authLayout = item.key
+  }
+
   return {
     config,
     toggleCollapsed,
@@ -182,5 +212,7 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     themes,
     addSelectedKeyHistory,
     removeSelectedKeyHistory,
+    authLayoutOptions,
+    setAuthLayout,
   }
 })

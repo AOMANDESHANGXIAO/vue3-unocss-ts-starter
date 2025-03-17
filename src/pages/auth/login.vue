@@ -47,7 +47,8 @@ const handleFinish = async (values: any) => {
 </script>
 
 <template>
-  <div class="mb-8">
+  <div>
+    <div class="mb-8">
     <h1 class="text-3xl font-bold mb-2 opacity-70">欢迎回来👋</h1>
     <p class="text-gray-600">请输入您的账号和密码~</p>
   </div>
@@ -106,52 +107,5 @@ const handleFinish = async (values: any) => {
       >&nbsp;点击注册</RouterLink
     ></a-divider
   >
+  </div>
 </template>
-
-<style>
-.animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out;
-}
-.animate-float-y {
-  animation: floatY 5s linear 0s infinite;
-}
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes floatY {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-#xb-login-hero__bg {
-  background: linear-gradient(
-    154deg,
-    #fff 30%,
-    rgb(var(--color-primary)) 48%,
-    #fff 64%
-  );
-  filter: blur(100px);
-}
-.dark #xb-login-hero__bg {
-  background: linear-gradient(
-    154deg,
-    #07070915 30%,
-    rgb(var(--color-primary)) 48%,
-    #07070915 64%
-  );
-  filter: blur(100px);
-}
-</style>

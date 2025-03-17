@@ -8,14 +8,13 @@
 </route>
 
 <script lang="ts" setup>
-import {
-  LayoutOutlined,
-} from '@ant-design/icons-vue'
+import { LayoutOutlined } from '@ant-design/icons-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useWindowSize } from '@vueuse/core'
 import {
   useSystemConfigStore,
   type Theme,
+  type AuthLayoutOption,
 } from '@/stores/modules/use-system-config-store'
 import { rgbToHex } from '@/utils/color'
 
@@ -25,7 +24,6 @@ defineOptions({
 
 const systemConfigStore = useSystemConfigStore()
 const { toggleColorMode, config } = systemConfigStore
-
 
 const show = () => {
   const dom = document.getElementById('xb-color-selector')
@@ -52,8 +50,17 @@ const handleClickColorSelector = (item: Theme) => {
 const { width } = useWindowSize()
 const MIN_WINDOW_WIDTH = 768
 const showHero = computed(() => {
+  return (
+    width.value > MIN_WINDOW_WIDTH &&
+    systemConfigStore.config.authLayout !== 'center'
+  )
+})
+const isFormFullWidth = computed(() => {
   return width.value > MIN_WINDOW_WIDTH
 })
+const handleLayoutChange = (item: AuthLayoutOption) => {
+  systemConfigStore.setAuthLayout(item)
+}
 </script>
 
 <template>
@@ -92,6 +99,7 @@ const showHero = computed(() => {
       </div>
     </div>
 
+    <!-- 调色板 -->
     <FontAwesomeIcon
       icon="palette"
       class="cursor-pointer"
@@ -101,23 +109,50 @@ const showHero = computed(() => {
       @mouseenter="show"
     ></FontAwesomeIcon>
 
-    <LayoutOutlined class="cursor-pointer ml-15px" />
+    <!-- 布局切换 -->
+    <a-dropdown>
+      <LayoutOutlined class="cursor-pointer ml-15px" />
+      <template #overlay>
+        <a-menu>
+          <a-menu-item
+            v-for="item in systemConfigStore.authLayoutOptions"
+            :key="item.key"
+            @click="handleLayoutChange(item)"
+          >
+            <FontAwesomeIcon :icon="item.icon" class="mr-8px"></FontAwesomeIcon
+            ><span>{{ item.label }}</span>
+          </a-menu-item>
+        </a-menu>
+      </template>
+    </a-dropdown>
 
+    <!-- 颜色模式切换 -->
     <FontAwesomeIcon
       @click="toggleColorMode"
       :icon="config.colorMode === 'dark' ? 'moon' : 'sun'"
-      class="z-1 cursor-pointer hover:rotate-45 transition-transform-300 ml-15px"
+      class="cursor-pointer hover:rotate-45 transition-transform-300 ml-15px"
     ></FontAwesomeIcon>
   </div>
 
   <div
     class="relative box-border min-h-screen flex bg-gradient-to-br overflow-hidden"
+    :class="{
+      // 翻转
+      'flex-row-reverse': systemConfigStore.config.authLayout === 'left',
+      'justify-center': systemConfigStore.config.authLayout === 'center',
+    }"
   >
+    <!-- 当用户将表单居中后给予一个装饰性的背景板 -->
     <div
-      v-show="showHero"
+      v-if="systemConfigStore.config.authLayout === 'center'"
+      class="xb-login-hero__bg absolute w-full h-full"
+    ></div>
+
+    <div
+      v-if="showHero"
       class="relative flex-1 flex flex-col justify-center items-center"
     >
-      <div id="xb-login-hero__bg" class="absolute w-full h-full"></div>
+      <div class="xb-login-hero__bg absolute w-full h-full"></div>
 
       <div class="w-60% h-60% animate-float-y">
         <img src="@/assets/images/welcome.svg" class="w-full h-full" />
@@ -130,15 +165,27 @@ const showHero = computed(() => {
     </div>
 
     <div
-      class="flex justify-center items-center bg-white dark:bg-deep-dark rounded-lg shadow-lg p-8 animate-fade-in-up"
+      class="flex justify-center items-center bg-white dark:bg-deep-dark rounded-lg shadow-lg p-8"
       :class="{
-        'w-34%': showHero,
-        'w-100%': !showHero,
+        'w-34%': isFormFullWidth,
+        'w-100%': !isFormFullWidth,
+        animate__animated: true,
+        animate__bounceIn: true,
       }"
     >
       <main class="w-80%">
-        <!-- include -->
-        <RouterView :key="$route.fullPath"/>
+        <RouterView v-slot="{ Component }">
+          <Transition
+            mode="out-in"
+            :appear="false"
+            enter-active-class="animate__animated animate__bounceIn"
+            leave-active-class="animate__animated animate__bounceOut"
+          >
+            <KeepAlive>
+              <component :is="Component" />
+            </KeepAlive>
+          </Transition>
+        </RouterView>
       </main>
     </div>
   </div>
@@ -172,7 +219,7 @@ const showHero = computed(() => {
     transform: translateY(0);
   }
 }
-#xb-login-hero__bg {
+.xb-login-hero__bg {
   background: linear-gradient(
     154deg,
     #fff 30%,
@@ -181,7 +228,7 @@ const showHero = computed(() => {
   );
   filter: blur(100px);
 }
-.dark #xb-login-hero__bg {
+.dark .xb-login-hero__bg {
   background: linear-gradient(
     154deg,
     #07070915 30%,
