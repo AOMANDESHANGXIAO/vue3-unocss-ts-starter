@@ -8,48 +8,25 @@
 </route>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import type { FormInstance } from 'ant-design-vue'
-import { message } from 'ant-design-vue'
 import {
-  UserOutlined,
-  LockOutlined,
   LayoutOutlined,
 } from '@ant-design/icons-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { useWindowSize } from '@vueuse/core'
 import {
   useSystemConfigStore,
   type Theme,
 } from '@/stores/modules/use-system-config-store'
 import { rgbToHex } from '@/utils/color'
 
-const systemConfigStore = useSystemConfigStore()
-const { toggleColorMode, config } = systemConfigStore
 defineOptions({
   name: 'login',
 })
 
-const formRef = ref<FormInstance>()
-const loading = ref(false)
-const rememberMe = ref(false)
+const systemConfigStore = useSystemConfigStore()
+const { toggleColorMode, config } = systemConfigStore
 
-const formState = ref({
-  username: '',
-  password: '',
-})
 
-const handleFinish = async (values: any) => {
-  loading.value = true
-  try {
-    // TODO: 实现登录逻辑
-    console.log('登录信息：', values)
-    message.success('登录成功')
-  } catch (error) {
-    message.error('登录失败')
-  } finally {
-    loading.value = false
-  }
-}
 const show = () => {
   const dom = document.getElementById('xb-color-selector')
   if (!dom) {
@@ -72,9 +49,15 @@ const hide = () => {
 const handleClickColorSelector = (item: Theme) => {
   systemConfigStore.setTheme(item)
 }
+const { width } = useWindowSize()
+const MIN_WINDOW_WIDTH = 768
+const showHero = computed(() => {
+  return width.value > MIN_WINDOW_WIDTH
+})
 </script>
 
 <template>
+  <!-- 右上角的工具栏,包含主题切换,布局切换，颜色模式切换 -->
   <div
     class="rounded-full p-x-20px fixed z-100 top-10px right-10px h-12 bg-#f3f4f6 dark:bg-#1f2937 flex items-center"
     @mouseleave="hide"
@@ -111,14 +94,14 @@ const handleClickColorSelector = (item: Theme) => {
 
     <FontAwesomeIcon
       icon="palette"
-      class="cursor-pointer z-1"
+      class="cursor-pointer"
       :style="{
         color: rgbToHex(config.cssVars['--color-primary']),
       }"
       @mouseenter="show"
     ></FontAwesomeIcon>
 
-    <LayoutOutlined class="cursor-pointer ml-15px z-1" />
+    <LayoutOutlined class="cursor-pointer ml-15px" />
 
     <FontAwesomeIcon
       @click="toggleColorMode"
@@ -130,63 +113,32 @@ const handleClickColorSelector = (item: Theme) => {
   <div
     class="relative box-border min-h-screen flex bg-gradient-to-br overflow-hidden"
   >
-    <div class="flex-1"></div>
+    <div
+      v-show="showHero"
+      class="relative flex-1 flex flex-col justify-center items-center"
+    >
+      <div id="xb-login-hero__bg" class="absolute w-full h-full"></div>
+
+      <div class="w-60% h-60% animate-float-y">
+        <img src="@/assets/images/welcome.svg" class="w-full h-full" />
+      </div>
+
+      <p class="text-3xl mb-2 opacity-70">Welcome to XB-Admin</p>
+      <p class="opacity-70">
+        基于Vue3 + Ant Design + UnoCss + TypeScript + Pinia + Vue-router
+      </p>
+    </div>
 
     <div
-      class="flex justify-center items-center bg-white dark:bg-deep-dark rounded-lg shadow-lg w-34% p-8 animate-fade-in-up"
+      class="flex justify-center items-center bg-white dark:bg-deep-dark rounded-lg shadow-lg p-8 animate-fade-in-up"
+      :class="{
+        'w-34%': showHero,
+        'w-100%': !showHero,
+      }"
     >
       <main class="w-80%">
-        <div class="mb-8">
-          <h1 class="text-3xl font-bold mb-2 opacity-70">欢迎回来👋</h1>
-          <p class="text-gray-600">请输入您的账号和密码~</p>
-        </div>
-
-        <a-form ref="formRef" :model="formState" @finish="handleFinish">
-          <a-form-item
-            name="username"
-            :rules="[{ required: true, message: '请输入用户名' }]"
-          >
-            <a-input
-              v-model:value="formState.username"
-              size="large"
-              placeholder="用户名"
-            >
-              <template #prefix>
-                <UserOutlined class="text-gray-400" />
-              </template>
-            </a-input>
-          </a-form-item>
-
-          <a-form-item
-            name="password"
-            :rules="[{ required: true, message: '请输入密码' }]"
-          >
-            <a-input-password
-              v-model:value="formState.password"
-              size="large"
-              placeholder="密码"
-            >
-              <template #prefix>
-                <LockOutlined class="text-gray-400" />
-              </template>
-            </a-input-password>
-          </a-form-item>
-
-          <div class="flex justify-between items-center mb-4">
-            <a-checkbox v-model:checked="rememberMe"> 记住我 </a-checkbox>
-            <a class="text-blue-500 hover:text-blue-600"> 忘记密码？ </a>
-          </div>
-
-          <a-button
-            type="primary"
-            html-type="submit"
-            :loading="loading"
-            class="w-full"
-            size="large"
-          >
-            {{ loading ? '登录中...' : '登录' }}
-          </a-button>
-        </a-form>
+        <!-- include -->
+        <RouterView :key="$route.fullPath"/>
       </main>
     </div>
   </div>
@@ -196,7 +148,9 @@ const handleClickColorSelector = (item: Theme) => {
 .animate-fade-in-up {
   animation: fadeInUp 0.5s ease-out;
 }
-
+.animate-float-y {
+  animation: floatY 5s linear 0s infinite;
+}
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -206,5 +160,34 @@ const handleClickColorSelector = (item: Theme) => {
     opacity: 1;
     transform: translateY(0);
   }
+}
+@keyframes floatY {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+#xb-login-hero__bg {
+  background: linear-gradient(
+    154deg,
+    #fff 30%,
+    rgb(var(--color-primary)) 48%,
+    #fff 64%
+  );
+  filter: blur(100px);
+}
+.dark #xb-login-hero__bg {
+  background: linear-gradient(
+    154deg,
+    #07070915 30%,
+    rgb(var(--color-primary)) 48%,
+    #07070915 64%
+  );
+  filter: blur(100px);
 }
 </style>

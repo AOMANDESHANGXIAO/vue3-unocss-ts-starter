@@ -10,12 +10,11 @@ const getRedirectRoutes = () => {
     {
       path: '/',
       redirect: () => {
-        // TODO: 根据用户权限动态分配路由
         const { isAuthenticated } = useUserStore()
         if (isAuthenticated) {
           return '/home'
         } else {
-          return '/login'
+          return '/auth/login'
         }
       },
     },
@@ -30,5 +29,6 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: [...routes, ...getRedirectRoutes()],
 })
+// TODO: 添加路由守卫
 export { routes }
 export default router
