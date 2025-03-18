@@ -1,22 +1,23 @@
 import axios, {
   type AxiosInstance,
   type AxiosResponse,
-  type AxiosError
+  type AxiosError,
 } from 'axios'
 import { message as antMessage } from 'ant-design-vue'
 import { useUserStore } from '@/stores/modules/use-user-store'
+import type { Response } from '@v3-nest-full-stack/shared'
 
 // Create axios instance
 const BASE_URL = import.meta.env.VITE_APP_API_URL
 
 const service: AxiosInstance = axios.create({
   baseURL: BASE_URL, // URL prefix from .env
-  timeout: 10000 // Request timeout
+  timeout: 10000, // Request timeout
 })
 
 // Request interceptor
 service.interceptors.request.use(
-  (config) => {
+  config => {
     const { getToken } = useUserStore()
     const token = getToken()
     // Add token to request headers if exists
@@ -40,11 +41,11 @@ const httpCodeHandler = (code: number) => {
 // Response interceptor
 service.interceptors.response.use(
   (response: AxiosResponse) => {
-    const { code, message, data, success } = response.data
+    const { code, message, data, success } = response.data as Response<any>
     // Custom response code handling
     if (!success) {
       antMessage.error(message || '请求出错了~')
-      httpCodeHandler(code as number)
+      httpCodeHandler(code)
       return Promise.reject(new Error(message || 'Error'))
     }
 

@@ -113,7 +113,7 @@ const handleLayoutChange = (item: AuthLayoutOption) => {
     <a-dropdown>
       <LayoutOutlined class="cursor-pointer ml-15px" />
       <template #overlay>
-        <a-menu>
+        <a-menu :selected-keys="[systemConfigStore.config.authLayout]">
           <a-menu-item
             v-for="item in systemConfigStore.authLayoutOptions"
             :key="item.key"
