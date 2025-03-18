@@ -1,29 +1,35 @@
 import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
+import { UserApi } from "@/apis/modules/user";
 
 export interface User {
   username: string;
-  avaterUrl: string;
-  token: string;
-  permission: string[];
+  avatarUrl: string;
 }
 
 export const useUserStore = defineStore("user-store", ()=>{
-  const user = useLocalStorage<User>('user', {
-    username: '',
-    avaterUrl: '',
-    token: '',
-    permission: [],
-  })
+  const token = useLocalStorage("xb-token", "")
   const isAuthenticated = computed(()=>{
-   return !!user.value.token 
+   return !!token.value 
   })
+  const user = ref<User | null>(null)
+  // TODO: 完善后端后再来
+  const initUser = async () => {
+   // 使用token来获取用户的信息
+   const res = await UserApi.getUserInfo()
+   user.value = res 
+  }
+  const getUser = () => {
+    return user.value
+  }
   const getToken = () => {
-    return user.value.token
+    return token.value
   }
   return {
     user,
     isAuthenticated,
-    getToken
+    getToken,
+    initUser,
+    getUser
   }
 })

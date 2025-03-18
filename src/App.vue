@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import MenuPage from '@/components/business/MenuPage.vue'
+import MenuPage from '@/components/business/menu-page.vue'
 import { RouterView, useRoute } from 'vue-router'
 import { theme } from 'ant-design-vue'
 import { useSystemConfigStore } from '@/stores/modules/use-system-config-store'

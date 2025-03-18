@@ -22,9 +22,12 @@ declare module 'vue' {
     AMenu: typeof import('ant-design-vue/es')['Menu']
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
     ASpace: typeof import('ant-design-vue/es')['Space']
+    ATable: typeof import('ant-design-vue/es')['Table']
     ColorModeSwitcher: typeof import('./src/components/ui/color-mode-switcher.vue')['default']
     ContentContainer: typeof import('./src/components/layouts/ContentContainer.vue')['default']
-    MenuPage: typeof import('./src/components/business/MenuPage.vue')['default']
+    MenuPage: typeof import('./src/components/business/menu-page.vue')['default']
+    MenuPageContent: typeof import('./src/components/business/menu-page-content.vue')['default']
+    MenuPageLoading: typeof import('./src/components/business/menu-page-loading.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

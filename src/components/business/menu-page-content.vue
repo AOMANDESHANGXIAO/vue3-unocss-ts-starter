@@ -7,12 +7,10 @@ import { NotificationOutlined } from '@ant-design/icons-vue'
 import _ from 'lodash'
 import router, { routes } from '@/routers'
 import { useSystemConfigStore } from '@/stores/modules/use-system-config-store'
-// import { UserApi } from '@/apis/modules/user'
+import { useUserStore } from '@/stores/modules/use-user-store'
 
-// UserApi.getUserInfo().then(res => {
-//   console.log('get User Info res', res)
-// })
-
+const userStore = useUserStore()
+await userStore.initUser()
 const systemConfigStore = useSystemConfigStore()
 const { toggleCollapsed, toggleColorMode, addSelectedKeyHistory } =
   systemConfigStore
@@ -90,7 +88,6 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
 
 <template>
   <div class="w-100vw h-100vh overflow-hidden flex">
-
     <div
       id="xb-menu"
       class="relative h-full bg-white flex flex-col dark:bg-deep-dark gray-border transition-width-300"
@@ -135,7 +132,6 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
         id="xb-content__header"
         class="flex-shrink-0 flex items-center justify-between bg-white dark:bg-deep-dark p-x-16px"
       >
-
         <component
           @click="toggleCollapsed"
           class="text-16px"
@@ -179,10 +175,10 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
           </a-badge>
 
           <a-space align="center" size="small">
-            <a-avatar
-              src="https://ai-public.mastergo.com/ai/img_res/a8bf73a294afd78156d5860b6d704d78.jpg"
-            ></a-avatar
-            ><span class="text-14px color-inherit">张老师</span>
+            <a-avatar :src="userStore.user!.avatarUrl"></a-avatar
+            ><span class="text-14px color-inherit">{{
+              userStore.user!.username
+            }}</span>
           </a-space>
         </a-space>
       </header>
@@ -216,7 +212,7 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
         </li>
       </TransitionGroup>
       <!-- content -->
-       
+
       <main id="xb-content__wrapper">
         <RouterView v-slot="{ Component }">
           <Transition mode="out-in" :appear="false">
@@ -253,7 +249,7 @@ li {
   border-top: 1px solid rgba($color: #ffffff, $alpha: 0.2);
   border-left: 1px solid rgba($color: #ffffff, $alpha: 0.2);
 }
-.dark #xb-content{
+.dark #xb-content {
   #xb-content__tabs {
     border-top: 1px solid rgba($color: #ffffff, $alpha: 0.2);
     border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.2);
