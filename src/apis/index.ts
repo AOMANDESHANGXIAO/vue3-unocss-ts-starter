@@ -6,7 +6,7 @@ import axios, {
 import { message as antMessage } from 'ant-design-vue'
 import { useUserStore } from '@/stores/modules/use-user-store'
 import type { Response } from '@v3-nest-full-stack/shared'
-
+import router, { routerMitter } from '@/routers'
 // Create axios instance
 const BASE_URL = import.meta.env.VITE_APP_API_URL
 
@@ -35,7 +35,7 @@ service.interceptors.request.use(
 // TODO: 完善
 const httpCodeHandler = (code: number) => {
   if (code === 401) {
-    console.log('token过期了')
+    routerMitter.emit('noAuth', router)
   }
 }
 // Response interceptor

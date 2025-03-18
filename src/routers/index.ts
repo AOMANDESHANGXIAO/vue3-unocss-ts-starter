@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 //@ts-ignore
 import { routes } from 'vue-router/auto-routes'
 import { useUserStore } from '@/stores/modules/use-user-store'
+import routerMitter from './modules/event-mitter'
 
 console.log('routes\n', routes)
 
@@ -30,5 +31,5 @@ const router = createRouter({
   routes: [...routes, ...getRedirectRoutes()],
 })
 // TODO: 添加路由守卫
-export { routes }
+export { routes, routerMitter }
 export default router
