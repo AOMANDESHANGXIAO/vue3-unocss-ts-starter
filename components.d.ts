@@ -25,6 +25,7 @@ declare module 'vue' {
     ATable: typeof import('ant-design-vue/es')['Table']
     ColorModeSwitcher: typeof import('./src/components/ui/color-mode-switcher.vue')['default']
     ContentContainer: typeof import('./src/components/layouts/ContentContainer.vue')['default']
+    Loading: typeof import('./src/components/ui/Loading.vue')['default']
     MenuPage: typeof import('./src/components/business/menu-page.vue')['default']
     MenuPageContent: typeof import('./src/components/business/menu-page-content.vue')['default']
     MenuPageLoading: typeof import('./src/components/business/menu-page-loading.vue')['default']

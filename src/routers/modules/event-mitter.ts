@@ -3,7 +3,6 @@ import type { Router } from 'vue-router'
 
 type Events = {
   noAuth: Router
-
 }
 const routerMitter = mitt<Events>()
 

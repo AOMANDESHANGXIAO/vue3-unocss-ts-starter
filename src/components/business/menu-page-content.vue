@@ -17,8 +17,7 @@ const { toggleCollapsed, toggleColorMode, addSelectedKeyHistory } =
 const systemConfig = toRef(systemConfigStore.config)
 const transformRouteToMenu = (route: RouteRecordRaw) => {
   const meta = route.meta
-  if (!meta) return
-  if (!meta.showInMenu) {
+  if (!meta||!meta.showInMenu) {
     return void 0
   }
   if (!meta.icon) {
@@ -48,14 +47,14 @@ const mapRouteToMenu = (routes: RouteRecordRaw[]): MenuProps['items'] => {
     if (route.children) {
       return {
         ...transformRouteToMenu(route),
-        children: mapRouteToMenu(route.children),
+        children: route.children ? mapRouteToMenu(route.children) : [],
       }
     }
     return transformRouteToMenu(route) as MenuProps['items']
   }) as MenuProps['items']
 }
-const items = mapRouteToMenu(routes)?.filter(Boolean)
-console.log(items)
+const items = mapRouteToMenu(routes)?.filter(item => item?.key)
+console.log('items', items)
 const menuStyle = computed(() => {
   return {
     flex: 1,
@@ -65,23 +64,23 @@ const menuStyle = computed(() => {
 // The type, e.g,MenuProps['onClick'], provided by ant-design-vue is not correct.
 // So that, I use any here.
 const handleMenuClick = (e: any) => {
-  if (!e) return
-  if (e.item.originItemValue.path) {
-    addSelectedKeyHistory({
-      key: e.key,
-      path: e.item.originItemValue.path,
-      title: e.item.originItemValue.title,
-      icon: e.item.originItemValue.iconName,
-    })
-    systemConfig.value.activeKey = e.key
-    router.push({
-      path: e.item.originItemValue.path,
-      replace: true,
-    })
-  }
+  if (!e || !e.item.originItemValue.path) return
+
+  addSelectedKeyHistory({
+    key: e.key,
+    path: e.item.originItemValue.path,
+    title: e.item.originItemValue.title,
+    icon: e.item.originItemValue.iconName,
+  })
+  systemConfig.value.activeKey = e.key
+  router.push({
+    path: e.item.originItemValue.path,
+    replace: true,
+  })
 }
 const handleClickTab = ({ path, key }: { path: string; key: string }) => {
   systemConfig.value.activeKey = key
+  systemConfig.value.selectedKeys = [key]
   router.push(path)
 }
 </script>
@@ -115,8 +114,8 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
         <a-menu
           @click="handleMenuClick"
           id="menu"
-          v-model:openKeys="systemConfig.openKeys"
-          v-model:selectedKeys="systemConfig.selectedKeys"
+          v-model:openKeys="systemConfigStore.config.openKeys"
+          v-model:selectedKeys="systemConfigStore.config.selectedKeys"
           :style="menuStyle"
           mode="inline"
           :inline-collapsed="systemConfig.collapsed"
@@ -188,13 +187,36 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
         name="list"
         tag="ul"
         id="xb-content__tabs"
-        class="flex items-center bg-white dark:bg-deep-dark p-x-8px gap-25px"
+        class="relative flex items-center bg-white dark:bg-deep-dark p-x-8px gap-25px overflow-x-auto hidden-scrollbar"
       >
+        <div
+          class="absolute h-full top-0 right-0 bottom-0 flex justify-center items-center bg-white dark:bg-deep-dark"
+        >
+          <a-dropdown>
+            <FontAwesomeIcon
+              :icon="['fas', 'chevron-up']"
+              class="cursor-pointer transform rotate-180 mr-10px"
+            />
+            <template #overlay>
+              <a-menu>
+                <a-menu-item>
+                  关闭当前
+                </a-menu-item>
+                <a-menu-item>
+                  关闭其他
+                </a-menu-item>
+                <a-menu-item>
+                  关闭所有
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
+        </div>
         <li
           v-for="item in systemConfigStore.config.selectedKeysHistory"
           :key="item.key"
           @click="handleClickTab(item)"
-          class="box-border cursor-pointer line-height-30px text-14px transition-all-300"
+          class="box-border shrink-0 cursor-pointer line-height-30px text-14px transition-all-300"
           :class="{
             'xb-content__tabs__item': true,
             'tab-item': true,
@@ -258,7 +280,7 @@ li {
 #xb-content {
   width: 100%;
   --w-header: 50px;
-  --w-tab: 30px;
+  --w-tab: 35px;
   #xb-content__header {
     height: var(--w-header);
   }

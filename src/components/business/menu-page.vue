@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import menuPageContent from './menu-page-content.vue';
-import menuPageLoading from './menu-page-loading.vue';
+import MenuPageContent from './menu-page-content.vue';
+import Loading from '@/components/ui/Loading.vue';
 defineOptions({
     name: 'menu-page'
 })
@@ -9,10 +9,10 @@ defineOptions({
 <template>
   <Suspense>
     <template #default>
-      <menuPageContent/>
+      <MenuPageContent/>
     </template>
     <template #fallback>
-      <menuPageLoading/>
+      <Loading/>
     </template>
   </Suspense>
 </template>

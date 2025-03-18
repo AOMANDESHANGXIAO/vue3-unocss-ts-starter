@@ -26,7 +26,7 @@ const formState = ref({
   repassword: '',
 })
 
-const rules: Record<string, Rule[]> = reactive({
+const rules: Record<string, Rule[]> = {
   username: [
     {
       required: true,
@@ -48,10 +48,11 @@ const rules: Record<string, Rule[]> = reactive({
       trigger: 'blur',
     },
   ],
-})
+}
 
 const handleFinish = async (values: any) => {
   loading.value = true
+  console.log(values)
 }
 </script>
 
