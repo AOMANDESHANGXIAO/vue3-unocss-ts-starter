@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { useLocalStorage, useDark, useToggle } from '@vueuse/core'
-import _ from 'lodash'
 import type { MenuTheme } from 'ant-design-vue'
+import _ from 'lodash'
+import router from '@/routers'
+
 export type SelectedKeyHistoryItem = {
   key: string
   path: string
@@ -144,18 +146,25 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
       return
     }
     config.value.selectedKeysHistory.push(item)
-    if (config.value.selectedKeysHistory.length > 5) {
-      config.value.selectedKeysHistory.shift()
-    }
   }
   const removeSelectedKeyHistory = (key: string) => {
-    // 如果只有一个，就不删除
+    const oldActiveKey = config.value.activeKey
+    // 只有一个，切换回首页？
     if (config.value.selectedKeysHistory.length === 1) {
-      console.log('只有一个，不删除')
+      config.value.activeKey = 'home'
+      config.value.selectedKeysHistory = [
+        {
+          key: 'home',
+          icon: 'home',
+          title: '首页',
+          path: '/',
+        },
+      ]
+      router.push('/')
       return
     }
     // 如果删除的是最后一个，就把倒数第二个作为activeKey
-    if (
+    else if (
       key ===
       config.value.selectedKeysHistory[
         config.value.selectedKeysHistory.length - 1
@@ -166,11 +175,9 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
         config.value.selectedKeysHistory[
           config.value.selectedKeysHistory.length - 1
         ].key
-      console.log('删除最后一个,现在的activeKey=', config.value.activeKey)
-      return
     }
     // 如果删除的是activeKey
-    if (key === config.value.activeKey) {
+    else if (key === config.value.activeKey) {
       config.value.activeKey =
         config.value.selectedKeysHistory[
           config.value.selectedKeysHistory.length - 1
@@ -180,6 +187,40 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     config.value.selectedKeysHistory = config.value.selectedKeysHistory.filter(
       i => i.key !== key
     )
+    if (oldActiveKey !== config.value.activeKey) {
+      // 切换路由
+      router.push(config.value.activeKey)
+    }
+  }
+
+  const removeSelectedKeyByCondition = (
+    condition: 'current' | 'all' | 'other'
+  ) => {
+    switch (condition) {
+      case 'current': {
+        removeSelectedKeyHistory(config.value.activeKey)
+        break
+      }
+      case 'all': {
+        config.value.activeKey = 'home'
+        config.value.selectedKeysHistory = [
+          {
+            key: 'home',
+            icon: 'home',
+            title: '首页',
+            path: '/',
+          },
+        ]
+        router.push('/')
+        break
+      }
+      case 'other': {
+        config.value.selectedKeysHistory =
+          config.value.selectedKeysHistory.filter(
+            i => i.key === config.value.activeKey
+          )
+      }
+    }
   }
 
   const authLayoutOptions: AuthLayoutOption[] = [
@@ -199,6 +240,7 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
       icon: 'align-center',
     },
   ]
+
   const setAuthLayout = (item: AuthLayoutOption) => {
     if (item.key === config.value.authLayout) return
     config.value.authLayout = item.key
@@ -212,6 +254,7 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     themes,
     addSelectedKeyHistory,
     removeSelectedKeyHistory,
+    removeSelectedKeyByCondition,
     authLayoutOptions,
     setAuthLayout,
   }

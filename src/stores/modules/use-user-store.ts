@@ -1,23 +1,24 @@
-import { defineStore } from "pinia";
-import { useLocalStorage } from "@vueuse/core";
-import { UserApi } from "@/apis/modules/user";
+import { defineStore } from 'pinia'
+import { useLocalStorage } from '@vueuse/core'
+import { UserApi } from '@/apis/modules/user'
 
 export interface User {
-  username: string;
-  avatarUrl: string;
+  username: string
+  avatarUrl: string
 }
 
-export const useUserStore = defineStore("user-store", ()=>{
-  const token = useLocalStorage("xb-token", "")
-  const isAuthenticated = computed(()=>{
-   return !!token.value 
+export const useUserStore = defineStore('user-store', () => {
+  const token = useLocalStorage('xb-token', '12312312')
+  const isAuthenticated = computed(() => {
+    //  return !!token.value
+    return true
   })
   const user = ref<User | null>(null)
   // TODO: 完善后端后再来
   const initUser = async () => {
-   // 使用token来获取用户的信息
-   const res = await UserApi.getUserInfo()
-   user.value = res 
+    // 使用token来获取用户的信息
+    const res = await UserApi.getUserInfo()
+    user.value = res
   }
   const getUser = () => {
     return user.value
@@ -30,6 +31,6 @@ export const useUserStore = defineStore("user-store", ()=>{
     isAuthenticated,
     getToken,
     initUser,
-    getUser
+    getUser,
   }
 })

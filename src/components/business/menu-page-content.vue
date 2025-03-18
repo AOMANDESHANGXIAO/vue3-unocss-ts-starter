@@ -17,7 +17,7 @@ const { toggleCollapsed, toggleColorMode, addSelectedKeyHistory } =
 const systemConfig = toRef(systemConfigStore.config)
 const transformRouteToMenu = (route: RouteRecordRaw) => {
   const meta = route.meta
-  if (!meta||!meta.showInMenu) {
+  if (!meta || !meta.showInMenu) {
     return void 0
   }
   if (!meta.icon) {
@@ -83,6 +83,12 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
   systemConfig.value.selectedKeys = [key]
   router.push(path)
 }
+/**
+ * 依据路由的path计算得到当前选中的菜单的key
+ */
+const selectedKeys = computed(() => {
+  return [router.currentRoute.value.path]
+})
 </script>
 
 <template>
@@ -115,7 +121,7 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
           @click="handleMenuClick"
           id="menu"
           v-model:openKeys="systemConfigStore.config.openKeys"
-          v-model:selectedKeys="systemConfigStore.config.selectedKeys"
+          :selectedKeys="selectedKeys"
           :style="menuStyle"
           mode="inline"
           :inline-collapsed="systemConfig.collapsed"
@@ -191,7 +197,8 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
       >
         <div
           class="absolute h-full top-0 right-0 bottom-0 flex justify-center items-center bg-white dark:bg-deep-dark"
-        >
+          :key="'xb-content__tabs__close-all'"
+          >
           <a-dropdown>
             <FontAwesomeIcon
               :icon="['fas', 'chevron-up']"
@@ -199,13 +206,23 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
             />
             <template #overlay>
               <a-menu>
-                <a-menu-item>
+                <a-menu-item
+                  @click="
+                    systemConfigStore.removeSelectedKeyByCondition('current')
+                  "
+                >
                   关闭当前
                 </a-menu-item>
-                <a-menu-item>
+                <a-menu-item
+                  @click="
+                    systemConfigStore.removeSelectedKeyByCondition('other')
+                  "
+                >
                   关闭其他
                 </a-menu-item>
-                <a-menu-item>
+                <a-menu-item
+                  @click="systemConfigStore.removeSelectedKeyByCondition('all')"
+                >
                   关闭所有
                 </a-menu-item>
               </a-menu>
