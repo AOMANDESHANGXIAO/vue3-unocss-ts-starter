@@ -85,18 +85,39 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     config.value.themeKey = newTheme.key
     config.value.cssVars = _.merge({}, defaultCssVars, newTheme.cssVars)
   }
+  const resetSelectedKeys = () => {
+    config.value.selectedKeysHistory = [
+      {
+        key: '/home',
+        icon: 'home',
+        title: '首页',
+        path: '/home',
+      },
+    ]
+  }
   const config = useLocalStorage('systemConfig', {
     colorMode: 'dark' as MenuTheme,
     theme: 'default',
     openKeys: ['home'],
-    activeKey: 'home',
-    selectedKeys: ['home'],
     preOpenKeys: ['home'] as string[],
     collapsed: false,
-    selectedKeysHistory: [] as SelectedKeyHistoryItem[],
+    selectedKeysHistory: [
+      {
+        key: '/home',
+        icon: 'home',
+        title: '首页',
+        path: '/home',
+      },
+    ] as SelectedKeyHistoryItem[],
     themeKey: 'shenlan',
     cssVars: _.merge({}, defaultCssVars, getThemeCssVarsByKey('shenlan')),
     authLayout: 'right' as AuthLayoutOption['key'],
+  })
+  const selectedKeys = computed(() => {
+    return [router.currentRoute.value.path]
+  })
+  const activeKey = computed(() => {
+    return router.currentRoute.value.path
   })
   if (config.value.colorMode === 'dark' && isDark.value === false) {
     toggleDark()
@@ -148,48 +169,23 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     config.value.selectedKeysHistory.push(item)
   }
   const removeSelectedKeyHistory = (key: string) => {
-    const oldActiveKey = config.value.activeKey
-    // 只有一个，切换回首页？
-    if (config.value.selectedKeysHistory.length === 1) {
-      config.value.activeKey = 'home'
-      config.value.selectedKeysHistory = [
-        {
-          key: 'home',
-          icon: 'home',
-          title: '首页',
-          path: '/',
-        },
-      ]
-      router.push('/')
-      return
-    }
-    // 如果删除的是最后一个，就把倒数第二个作为activeKey
-    else if (
-      key ===
-      config.value.selectedKeysHistory[
-        config.value.selectedKeysHistory.length - 1
-      ].key
-    ) {
-      config.value.selectedKeysHistory.pop()
-      config.value.activeKey =
-        config.value.selectedKeysHistory[
-          config.value.selectedKeysHistory.length - 1
-        ].key
-    }
-    // 如果删除的是activeKey
-    else if (key === config.value.activeKey) {
-      config.value.activeKey =
-        config.value.selectedKeysHistory[
-          config.value.selectedKeysHistory.length - 1
-        ].key
-      console.log('删除activeKey,现在的activeKey=', config.value.activeKey)
-    }
     config.value.selectedKeysHistory = config.value.selectedKeysHistory.filter(
       i => i.key !== key
     )
-    if (oldActiveKey !== config.value.activeKey) {
-      // 切换路由
-      router.push(config.value.activeKey)
+    // 删除完了就重置一下，返回首页
+    if (config.value.selectedKeysHistory.length === 0) {
+      resetSelectedKeys()
+      router.push('/')
+      return
+    }
+    // 如果删除的是当前的，就把上一个设置为当前
+    else if (key === activeKey.value) {
+      const lastItem =
+        config.value.selectedKeysHistory[
+          config.value.selectedKeysHistory.length - 1
+        ]
+      router.push(lastItem.path)
+      return
     }
   }
 
@@ -198,26 +194,18 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
   ) => {
     switch (condition) {
       case 'current': {
-        removeSelectedKeyHistory(config.value.activeKey)
+        removeSelectedKeyHistory(activeKey.value)
         break
       }
       case 'all': {
-        config.value.activeKey = 'home'
-        config.value.selectedKeysHistory = [
-          {
-            key: 'home',
-            icon: 'home',
-            title: '首页',
-            path: '/',
-          },
-        ]
+        resetSelectedKeys()
         router.push('/')
         break
       }
       case 'other': {
         config.value.selectedKeysHistory =
           config.value.selectedKeysHistory.filter(
-            i => i.key === config.value.activeKey
+            i => i.key === activeKey.value
           )
       }
     }
@@ -248,6 +236,8 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
 
   return {
     config,
+    selectedKeys,
+    activeKey,
     toggleCollapsed,
     toggleColorMode,
     setTheme,

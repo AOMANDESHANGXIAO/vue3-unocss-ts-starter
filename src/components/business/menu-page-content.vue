@@ -72,23 +72,18 @@ const handleMenuClick = (e: any) => {
     title: e.item.originItemValue.title,
     icon: e.item.originItemValue.iconName,
   })
-  systemConfig.value.activeKey = e.key
   router.push({
     path: e.item.originItemValue.path,
     replace: true,
   })
 }
 const handleClickTab = ({ path, key }: { path: string; key: string }) => {
-  systemConfig.value.activeKey = key
-  systemConfig.value.selectedKeys = [key]
+
+  console.log('activeKey', systemConfigStore.activeKey)
+  console.log('path', path)
+  console.log('key',key)
   router.push(path)
 }
-/**
- * 依据路由的path计算得到当前选中的菜单的key
- */
-const selectedKeys = computed(() => {
-  return [router.currentRoute.value.path]
-})
 </script>
 
 <template>
@@ -121,7 +116,7 @@ const selectedKeys = computed(() => {
           @click="handleMenuClick"
           id="menu"
           v-model:openKeys="systemConfigStore.config.openKeys"
-          :selectedKeys="selectedKeys"
+          :selectedKeys="systemConfigStore.selectedKeys"
           :style="menuStyle"
           mode="inline"
           :inline-collapsed="systemConfig.collapsed"
@@ -198,7 +193,7 @@ const selectedKeys = computed(() => {
         <div
           class="absolute h-full top-0 right-0 bottom-0 flex justify-center items-center bg-white dark:bg-deep-dark"
           :key="'xb-content__tabs__close-all'"
-          >
+        >
           <a-dropdown>
             <FontAwesomeIcon
               :icon="['fas', 'chevron-up']"
@@ -229,6 +224,7 @@ const selectedKeys = computed(() => {
             </template>
           </a-dropdown>
         </div>
+        <!-- TODO: 修复bug，当前为'/'时，实际为'home' -->
         <li
           v-for="item in systemConfigStore.config.selectedKeysHistory"
           :key="item.key"
@@ -238,13 +234,12 @@ const selectedKeys = computed(() => {
             'xb-content__tabs__item': true,
             'tab-item': true,
             'text-primary border-b-primary active':
-              systemConfig.activeKey === item.key,
-            'opacity-70 hover:opacity-100': systemConfig.activeKey !== item.key,
+            systemConfigStore.activeKey === item.key,
+            'opacity-70 hover:opacity-100': systemConfigStore.activeKey !== item.key,
           }"
         >
           <FontAwesomeIcon
-            v-if="item.icon"
-            :icon="item.icon"
+            :icon="item.icon ? item.icon : 'file'"
             class="mr-8px"
           ></FontAwesomeIcon
           ><span> {{ item.title }}</span>
@@ -254,7 +249,11 @@ const selectedKeys = computed(() => {
 
       <main id="xb-content__wrapper">
         <RouterView v-slot="{ Component }">
-          <Transition mode="out-in" :appear="false">
+          <Transition
+            mode="out-in"
+            :appear="false"
+            enter-active-class="animate__animated animate__fadeInRight"
+          >
             <KeepAlive>
               <component :is="Component" />
             </KeepAlive>
