@@ -138,6 +138,7 @@ const activeSetting = ref('appearance')
     <a-drawer
       v-model:open="open"
       placement="right"
+      getContainer="#root"
       :class="['xb-drawer']"
       :closable="false"
       :body-style="{
@@ -156,9 +157,9 @@ const activeSetting = ref('appearance')
           class="cursor-pointer"
         />
       </header>
-      <main class="box-border p-10px" :class="['xb-drawer__main']">
+      <main class="box-border p-10px p-t-0" :class="['xb-drawer__main']">
         <a-tabs v-model:activeKey="activeSetting">
-          <a-tab-pane key="appearance" tab="外观">
+          <a-tab-pane key="appearance" tab="外观" class="text-16px">
             <AppearenceSetting />
           </a-tab-pane>
           <a-tab-pane key="layout" tab="布局"></a-tab-pane>
@@ -312,7 +313,7 @@ const activeSetting = ref('appearance')
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .hidden-scrollbar {
   &::-webkit-scrollbar {
     display: none;
@@ -374,15 +375,19 @@ li {
 .light::view-transition-new(root) {
   z-index: 100;
 }
+.dark .xb-content__header {
+  border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.2);
+}
 .xb-drawer {
   --h-header: 50px;
   --h-footer: 50px;
   .xb-drawer__header {
     height: var(--w-header);
+    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
   }
   .xb-drawer__main {
     height: calc(100vh - var(--w-header) - var(--w-footer));
-    overflow-x:hidden;
+    overflow-x: hidden;
     overflow-y: auto;
   }
   .xb-drawer__footer {

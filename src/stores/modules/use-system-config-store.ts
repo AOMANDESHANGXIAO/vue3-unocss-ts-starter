@@ -59,12 +59,34 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
       },
     },
     {
+      name:'鹅黄',
+      key:'ehuang',
+      cssVars:{
+        '--color-primary': '246, 220, 67',
+      }
+    },
+    {
+      name:'粉色',
+      key:'fenge',
+      cssVars:{
+        '--color-primary': '236, 127, 169',
+      }
+    },
+    {
+      name:'优雅',
+      key:'geili',
+      cssVars:{
+        '--color-primary': '120, 134, 199',
+      }
+    },
+    {
       name: '精致',
       key: 'jingzhi',
       cssVars: {
         '--color-primary': '76, 88, 91',
       },
     },
+
   ]
   const defaultCssVars = {
     '--color-primary': '22, 119, 255',
@@ -84,6 +106,8 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     if (themes.find(i => i.key === newTheme.key) === undefined) return
     config.value.themeKey = newTheme.key
     config.value.cssVars = _.merge({}, defaultCssVars, newTheme.cssVars)
+    console.log('切换主题 newTheme:', newTheme)
+    console.log('切换主题 cssVars:', config.value.cssVars)
   }
   const resetSelectedKeys = () => {
     config.value.selectedKeysHistory = [
@@ -188,6 +212,7 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     }
     config.value.selectedKeysHistory.push(item)
   }
+
   const removeSelectedKeyHistory = (key: string) => {
     config.value.selectedKeysHistory = config.value.selectedKeysHistory.filter(
       i => i.key !== key

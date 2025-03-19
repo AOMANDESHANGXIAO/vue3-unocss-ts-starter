@@ -15,6 +15,8 @@ const eventMounted = (el: HTMLElement, binding: vHoverClassBinding) => {
   } else {
     className = value
   }
+  el.removeEventListener('mouseenter', () => {})
+  el.removeEventListener('mouseleave', () => {})
   el.addEventListener('mouseenter', () => {
     // splite className by space
     const classList = className.split(' ')

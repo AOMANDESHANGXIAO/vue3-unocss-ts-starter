@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { useElementHover } from '@vueuse/core'
+import { vHoverClass } from '@/directives/v-hover-class';
 
 defineOptions({
   name: 'bell',
 })
-const dom = ref(null)
-const isHovered = useElementHover(dom)
 const props = withDefaults(
   defineProps<{
     showDot?: boolean
@@ -24,9 +22,7 @@ const emits = defineEmits(['click'])
       ref="dom"
       icon="bell"
       class="cursor-pointer"
-      :class="{
-        'animate__animated animate__swing': isHovered,
-      }"
+      v-hover-class="'animate__animated animate__swing'"
     ></FontAwesomeIcon>
     <div
       v-if="props.showDot"
