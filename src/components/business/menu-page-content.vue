@@ -77,17 +77,19 @@ const handleMenuClick = (e: any) => {
     replace: true,
   })
 }
-const handleClickTab = ({ path, key }: { path: string; key: string }) => {
-
-  console.log('activeKey', systemConfigStore.activeKey)
-  console.log('path', path)
-  console.log('key',key)
+const handleClickTab = ({ path }: { path: string }) => {
   router.push(path)
+}
+const open = ref(false)
+const handleClickSetting = () => {
+  console.log('click setting')
+  open.value = !open.value
 }
 </script>
 
 <template>
   <div class="w-100vw h-100vh overflow-hidden flex">
+    <!-- 菜单 -->
     <div
       id="xb-menu"
       class="relative h-full bg-white flex flex-col dark:bg-deep-dark gray-border transition-width-300"
@@ -126,6 +128,22 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
       </section>
     </div>
 
+    <!-- 设置抽屉 -->
+    <a-drawer
+      v-model:open="open"
+      class="custom-class"
+      root-class-name="root-class-name"
+      :root-style="{ color: 'blue' }"
+      style="color: red"
+      title="Basic Drawer"
+      placement="right"
+    >
+      <!-- TODO: 偏好设置编写 -->
+      <p>Some contents...</p>
+      <p>Some contents...</p>
+      <p>Some contents...</p>
+    </a-drawer>
+
     <div id="xb-content" class="gray-border">
       <!-- header -->
       <header
@@ -153,18 +171,17 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
 
           <!-- setting icon-->
           <FontAwesomeIcon
+            @click="handleClickSetting"
             icon="cog"
             class="cursor-pointer hover:rotate-45 transition-transform-300"
           ></FontAwesomeIcon>
 
           <!-- color mode icon -->
-          <Transition name="fade">
-            <FontAwesomeIcon
-              @click="toggleColorMode"
-              :icon="systemConfig.colorMode === 'dark' ? 'moon' : 'sun'"
-              class="cursor-pointer hover:rotate-45 transition-transform-300"
-            ></FontAwesomeIcon>
-          </Transition>
+          <FontAwesomeIcon
+            @click="toggleColorMode"
+            :icon="systemConfig.colorMode === 'dark' ? 'moon' : 'sun'"
+            class="cursor-pointer hover:rotate-45 transition-transform-300"
+          ></FontAwesomeIcon>
 
           <a-badge dot>
             <notification-outlined
@@ -183,7 +200,7 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
         </a-space>
       </header>
 
-      <!-- tabs -->
+      <!-- tabs container -->
       <TransitionGroup
         name="list"
         tag="ul"
@@ -224,7 +241,9 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
             </template>
           </a-dropdown>
         </div>
-        <!-- TODO: 修复bug，当前为'/'时，实际为'home' -->
+
+        <!-- tabs -->
+
         <li
           v-for="item in systemConfigStore.config.selectedKeysHistory"
           :key="item.key"
@@ -234,8 +253,9 @@ const handleClickTab = ({ path, key }: { path: string; key: string }) => {
             'xb-content__tabs__item': true,
             'tab-item': true,
             'text-primary border-b-primary active':
-            systemConfigStore.activeKey === item.key,
-            'opacity-70 hover:opacity-100': systemConfigStore.activeKey !== item.key,
+              systemConfigStore.activeKey === item.key,
+            'opacity-70 hover:opacity-100':
+              systemConfigStore.activeKey !== item.key,
           }"
         >
           <FontAwesomeIcon
