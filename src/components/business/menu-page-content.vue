@@ -7,11 +7,11 @@ import {
   RedoOutlined,
 } from '@ant-design/icons-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { NotificationOutlined } from '@ant-design/icons-vue'
 import _ from 'lodash'
 import router, { routes } from '@/routers'
 import { useSystemConfigStore } from '@/stores/modules/use-system-config-store'
 import { useUserStore } from '@/stores/modules/use-user-store'
+import Bell from '@/components/ui/Bell.vue'
 
 const userStore = useUserStore()
 await userStore.initUser()
@@ -93,7 +93,7 @@ const refreshKey = ref(0)
 const handleRefresh = () => {
   refreshKey.value++
 }
-const componentRefreshKey = computed(()=>{
+const componentRefreshKey = computed(() => {
   return router.currentRoute.value.fullPath + refreshKey.value
 })
 </script>
@@ -197,13 +197,8 @@ const componentRefreshKey = computed(()=>{
             class="cursor-pointer hover:rotate-45 transition-transform-300"
           ></FontAwesomeIcon>
 
-          <a-badge dot>
-            <notification-outlined
-              :style="{
-                color: systemConfig.colorMode === 'dark' ? 'white' : 'black',
-              }"
-            />
-          </a-badge>
+          <!-- bell -->
+          <Bell />
 
           <a-space align="center" size="small">
             <a-avatar :src="userStore.user!.avatarUrl"></a-avatar
@@ -289,7 +284,7 @@ const componentRefreshKey = computed(()=>{
             enter-active-class="animate__animated animate__fadeInRight"
           >
             <KeepAlive>
-              <component :is="Component" :key="componentRefreshKey"/>
+              <component :is="Component" :key="componentRefreshKey" />
             </KeepAlive>
           </Transition>
         </RouterView>

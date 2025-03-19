@@ -25,6 +25,7 @@ declare module 'vue' {
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
     ASpace: typeof import('ant-design-vue/es')['Space']
     ATable: typeof import('ant-design-vue/es')['Table']
+    Bell: typeof import('./src/components/ui/Bell.vue')['default']
     ColorModeSwitcher: typeof import('./src/components/ui/color-mode-switcher.vue')['default']
     ContentContainer: typeof import('./src/components/layouts/ContentContainer.vue')['default']
     Loading: typeof import('./src/components/ui/Loading.vue')['default']
