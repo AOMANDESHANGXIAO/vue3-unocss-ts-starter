@@ -85,12 +85,17 @@ const handleMenuClick = (e: any) => {
 const handleClickTab = ({ path }: { path: string }) => {
   router.push(path)
 }
-const open = ref(true)
+const open = ref(false)
 const handleClickSetting = () => {
   open.value = !open.value
 }
 
 const activeSetting = ref('appearance')
+
+const handleClickLogout = () => {
+  userStore.logout()
+  systemConfigStore.removeCache()
+}
 </script>
 
 <template>
@@ -167,11 +172,10 @@ const activeSetting = ref('appearance')
         </a-tabs>
       </main>
       <footer
-        class="box-border p-10px absolute bottom-0"
+        class="box-border p-10px absolute bottom-0 w-full"
         :class="['xb-drawer__footer']"
       >
-        <a-button type="primary">保存</a-button>
-        <a-button>取消</a-button>
+        <a-button class="w-100%" @click="handleClickLogout">清空缓存&退出登录</a-button>
       </footer>
     </a-drawer>
 
@@ -381,6 +385,8 @@ li {
 .xb-drawer {
   --h-header: 50px;
   --h-footer: 50px;
+  height: 100vh;
+  overflow: hidden;
   .xb-drawer__header {
     height: var(--w-header);
     border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);

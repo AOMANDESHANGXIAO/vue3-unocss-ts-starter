@@ -170,7 +170,7 @@ const handleLayoutChange = (item: AuthLayoutOption) => {
         'w-34%': isFormFullWidth,
         'w-100%': !isFormFullWidth,
         animate__animated: true,
-        animate__bounceIn: true,
+        animate__wobble: true,
       }"
     >
       <main class="w-80%">

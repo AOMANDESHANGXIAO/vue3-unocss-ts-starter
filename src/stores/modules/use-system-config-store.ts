@@ -140,6 +140,12 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     cssVars: _.merge({}, defaultCssVars, getThemeCssVarsByKey('shenlan')),
     authLayout: 'right' as AuthLayoutOption['key'],
   })
+  const removeCache = () => {
+    localStorage.clear()
+    sessionStorage.clear()
+    location.reload()
+  }
+
   const selectedKeys = computed(() => {
     return [router.currentRoute.value.path]
   })
@@ -293,5 +299,6 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     authLayoutOptions,
     setAuthLayout,
     switchColorMode,
+    removeCache
   }
 })

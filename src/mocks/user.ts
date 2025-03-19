@@ -19,6 +19,21 @@ export default [
       }
     },
   },
+  {
+    url: `${baseUrl}/login`,
+    method: 'post',
+    timeout: 1000,
+    response: () => {
+      return {
+        code: 200,
+        message: 'ok',
+        success: true,
+        data: {
+          token: 'dadadadfdasdasdasdasdasdas',
+        },
+      }
+    },
+  },
   // {
   //   url: `${baseUrl}/info`,
   //   method: 'get',
