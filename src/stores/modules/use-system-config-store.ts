@@ -20,7 +20,7 @@ export type AuthLayoutOption = {
   label: string
   icon: string
 }
-
+export type ColorScheme = 'auto' | 'light' | 'dark'
 export const useSystemConfigStore = defineStore('system-config-store', () => {
   const isDark = useDark({
     selector: 'html',
@@ -96,7 +96,10 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     ]
   }
   const config = useLocalStorage('systemConfig', {
-    colorMode: 'dark' as MenuTheme,
+    colorMode: window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : ('light' as MenuTheme),
+    colorModeSelect: 'auto' as ColorScheme,
     theme: 'default',
     openKeys: ['home'],
     preOpenKeys: ['home'] as string[],
@@ -125,6 +128,23 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
   const toggleCollapsed = () => {
     config.value.collapsed = !config.value.collapsed
   }
+  const switchColorMode = (e: MouseEvent, mode: ColorScheme) => {
+    config.value.colorModeSelect = mode
+    if (mode === 'auto') {
+      // 获取系统的设置
+      const systemMode = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
+        ? 'dark'
+        : 'light'
+      console.log('系统偏好:', systemMode)
+      if (systemMode === config.value.colorMode) return
+    }
+    if (mode === config.value.colorMode) {
+      return
+    }
+    toggleColorMode(e)
+  }
+
   const toggleColorMode = async (e: MouseEvent) => {
     // 以下代码是为了实现一个主题切换的动画
     const transition = document.startViewTransition(() => {
@@ -247,5 +267,6 @@ export const useSystemConfigStore = defineStore('system-config-store', () => {
     removeSelectedKeyByCondition,
     authLayoutOptions,
     setAuthLayout,
+    switchColorMode,
   }
 })

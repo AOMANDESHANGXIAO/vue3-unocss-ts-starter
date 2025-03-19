@@ -12,6 +12,7 @@ import router, { routes } from '@/routers'
 import { useSystemConfigStore } from '@/stores/modules/use-system-config-store'
 import { useUserStore } from '@/stores/modules/use-user-store'
 import Bell from '@/components/ui/Bell.vue'
+import AppearenceSetting from './appearence-setting.vue'
 
 const userStore = useUserStore()
 await userStore.initUser()
@@ -84,18 +85,12 @@ const handleMenuClick = (e: any) => {
 const handleClickTab = ({ path }: { path: string }) => {
   router.push(path)
 }
-const open = ref(false)
+const open = ref(true)
 const handleClickSetting = () => {
   open.value = !open.value
 }
 
-const refreshKey = ref(0)
-const handleRefresh = () => {
-  refreshKey.value++
-}
-const componentRefreshKey = computed(() => {
-  return router.currentRoute.value.fullPath + refreshKey.value
-})
+const activeSetting = ref('appearance')
 </script>
 
 <template>
@@ -142,17 +137,41 @@ const componentRefreshKey = computed(() => {
     <!-- 设置抽屉 -->
     <a-drawer
       v-model:open="open"
-      class="custom-class"
-      root-class-name="root-class-name"
-      :root-style="{ color: 'blue' }"
-      style="color: red"
-      title="Basic Drawer"
       placement="right"
+      :class="['xb-drawer']"
+      :closable="false"
+      :body-style="{
+        padding: '0px',
+        position: 'relative',
+      }"
     >
-      <!-- TODO: 偏好设置编写 -->
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
+      <header
+        :class="['xb-drawer__header']"
+        class="box-border border-b-1px border-gray-200 p-10px flex justify-between items-center"
+      >
+        <span class="text-16px">偏好设置</span>
+        <FontAwesomeIcon
+          @click="open = false"
+          icon="times"
+          class="cursor-pointer"
+        />
+      </header>
+      <main class="box-border p-10px" :class="['xb-drawer__main']">
+        <a-tabs v-model:activeKey="activeSetting">
+          <a-tab-pane key="appearance" tab="外观">
+            <AppearenceSetting />
+          </a-tab-pane>
+          <a-tab-pane key="layout" tab="布局"></a-tab-pane>
+          <a-tab-pane key="common" tab="通用"></a-tab-pane>
+        </a-tabs>
+      </main>
+      <footer
+        class="box-border p-10px absolute bottom-0"
+        :class="['xb-drawer__footer']"
+      >
+        <a-button type="primary">保存</a-button>
+        <a-button>取消</a-button>
+      </footer>
     </a-drawer>
 
     <div id="xb-content" class="gray-border">
@@ -167,7 +186,7 @@ const componentRefreshKey = computed(() => {
             class="text-16px"
             :is="systemConfig.collapsed ? MenuFoldOutlined : MenuUnfoldOutlined"
           ></component>
-          <RedoOutlined class="cursor-pointer" @click="handleRefresh" />
+          <RedoOutlined class="cursor-pointer" />
         </div>
 
         <a-space size="large">
@@ -274,8 +293,8 @@ const componentRefreshKey = computed(() => {
           ><span> {{ item.title }}</span>
         </li>
       </TransitionGroup>
-      <!-- content -->
 
+      <!-- content -->
       <main id="xb-content__wrapper">
         <RouterView v-slot="{ Component }">
           <Transition
@@ -284,7 +303,7 @@ const componentRefreshKey = computed(() => {
             enter-active-class="animate__animated animate__fadeInRight"
           >
             <KeepAlive>
-              <component :is="Component" :key="componentRefreshKey" />
+              <component :is="Component" />
             </KeepAlive>
           </Transition>
         </RouterView>
@@ -354,5 +373,20 @@ li {
 }
 .light::view-transition-new(root) {
   z-index: 100;
+}
+.xb-drawer {
+  --h-header: 50px;
+  --h-footer: 50px;
+  .xb-drawer__header {
+    height: var(--w-header);
+  }
+  .xb-drawer__main {
+    height: calc(100vh - var(--w-header) - var(--w-footer));
+    overflow-x:hidden;
+    overflow-y: auto;
+  }
+  .xb-drawer__footer {
+    height: var(--w-footer);
+  }
 }
 </style>
