@@ -4,7 +4,8 @@
     "title": "系统设置",
     "icon": "cog",
     "menuOrder": 6,
-    "showInMenu": true
+    "showInMenu": true,
+    "breadcrumbName": "系统设置"
   }
 }
 </route>

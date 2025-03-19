@@ -5,7 +5,8 @@
     "title": "教师管理",
     "icon": "chalkboard-teacher",
     "menuOrder": 3,
-    "showInMenu": true
+    "showInMenu": true,
+    "breadcrumbName": "教师管理"
   }
 }
 </route>

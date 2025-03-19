@@ -3,7 +3,8 @@
   "meta": {
     "title": "教师信息",
     "menuOrder": 1,
-    "showInMenu": true
+    "showInMenu": true,
+    "breadcrumbName": "教师信息"
   }
 }
 </route>

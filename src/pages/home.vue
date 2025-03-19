@@ -4,7 +4,8 @@
     "title": "首页",
     "icon": "home",
     "menuOrder": 1,
-    "showInMenu": true
+    "showInMenu": true,
+    "breadcrumbName": "首页"
   }
 }
 </route>

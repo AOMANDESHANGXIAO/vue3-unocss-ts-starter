@@ -4,7 +4,8 @@
     "title": "学生管理",
     "icon": "user-graduate",
     "menuOrder": 2,
-    "showInMenu": true
+    "showInMenu": true,
+    "breadcrumbName": "学生管理"
   }
 }
 </route>

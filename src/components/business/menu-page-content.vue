@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import type { RouteRecordRaw } from 'vue-router'
 import type { MenuProps } from 'ant-design-vue'
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons-vue'
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  RedoOutlined,
+} from '@ant-design/icons-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { NotificationOutlined } from '@ant-design/icons-vue'
 import _ from 'lodash'
@@ -82,9 +86,16 @@ const handleClickTab = ({ path }: { path: string }) => {
 }
 const open = ref(false)
 const handleClickSetting = () => {
-  console.log('click setting')
   open.value = !open.value
 }
+
+const refreshKey = ref(0)
+const handleRefresh = () => {
+  refreshKey.value++
+}
+const componentRefreshKey = computed(()=>{
+  return router.currentRoute.value.fullPath + refreshKey.value
+})
 </script>
 
 <template>
@@ -150,11 +161,14 @@ const handleClickSetting = () => {
         id="xb-content__header"
         class="flex-shrink-0 flex items-center justify-between bg-white dark:bg-deep-dark p-x-16px"
       >
-        <component
-          @click="toggleCollapsed"
-          class="text-16px"
-          :is="systemConfig.collapsed ? MenuFoldOutlined : MenuUnfoldOutlined"
-        ></component>
+        <div class="flex items-center gap-15px">
+          <component
+            @click="toggleCollapsed"
+            class="text-16px"
+            :is="systemConfig.collapsed ? MenuFoldOutlined : MenuUnfoldOutlined"
+          ></component>
+          <RedoOutlined class="cursor-pointer" @click="handleRefresh" />
+        </div>
 
         <a-space size="large">
           <div
@@ -275,7 +289,7 @@ const handleClickSetting = () => {
             enter-active-class="animate__animated animate__fadeInRight"
           >
             <KeepAlive>
-              <component :is="Component" />
+              <component :is="Component" :key="componentRefreshKey"/>
             </KeepAlive>
           </Transition>
         </RouterView>

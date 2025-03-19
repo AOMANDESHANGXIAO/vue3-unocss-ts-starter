@@ -4,7 +4,8 @@
     "title": "成绩管理",
     "icon": "edit",
     "menuOrder": 5,
-    "showInMenu": true
+    "showInMenu": true,
+    "breadcrumbName": "成绩管理"
   }
 }
 </route>

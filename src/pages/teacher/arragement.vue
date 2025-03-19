@@ -3,15 +3,15 @@
   "meta": {
     "title": "教学安排",
     "menuOrder": 1,
-    "showInMenu": true
+    "showInMenu": true,
+    "breadcrumbName": "教学安排"
   }
 }
 </route>
 
 <script lang="ts" setup>
-import ContentContainer from '@/components/layouts/ContentContainer.vue';
+import ContentContainer from '@/components/layouts/ContentContainer.vue'
 </script>
-
 
 <template>
   <ContentContainer>
